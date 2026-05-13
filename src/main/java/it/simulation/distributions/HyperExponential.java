@@ -10,7 +10,8 @@ public class HyperExponential extends Distribution {
 
     public HyperExponential(Rngs r, double variationCoefficient, double mean, int stream1, int stream2, int stream3) {
         super(r, null, mean);
-        this.p = 1.0 / 2.0 * (1 + Math.sqrt((variationCoefficient - 1.0) / (variationCoefficient + 1.0)));
+        double c2 = variationCoefficient * variationCoefficient;
+        this.p = 1.0 / 2.0 * (1 + Math.sqrt((c2 - 1.0) / (c2 + 1.0)));
         double mean1 = mean / (2.0 * p);
         double mean2 = mean / (2.0 * (1.0 - p));
         this.exp1 = new Exponential(r, stream1, mean1);
