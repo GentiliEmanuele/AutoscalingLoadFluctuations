@@ -34,6 +34,7 @@ public class Config {
     public static int REPETITION_NUMBER;
     public static double CONFIDENCE_LEVEL;
     public static String OUTPUT_PATH;
+    public static int BATCH_SIZE;
 
     static {
         readConfiguration();
@@ -71,6 +72,7 @@ public class Config {
             REPETITION_NUMBER = Integer.parseInt(props.getProperty("repetition.number"));
             CONFIDENCE_LEVEL = Double.parseDouble(props.getProperty("confidence.level"));
             OUTPUT_PATH = props.getProperty("output.path");
+            BATCH_SIZE = Integer.parseInt(props.getProperty("batch.size"));
         } catch (IOException e) {
             throw new ExceptionInInitializerError(
                     "Impossible loading " + CONFIG_FILE + ": " + e.getMessage());

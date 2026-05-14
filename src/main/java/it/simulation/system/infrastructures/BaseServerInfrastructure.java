@@ -96,7 +96,7 @@ public class BaseServerInfrastructure implements Infrastructure {
 
     @Override
     public SystemStats computeSystemStats(double currentTs) {
-        double totalCompletion = 0.0;
+        int totalCompletion = 0;
         double totalBusyTime = 0.0;
 
         for (AbstractServer server : webServers) {

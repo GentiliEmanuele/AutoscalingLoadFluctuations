@@ -22,7 +22,7 @@ public class ReplicationCollector implements Collector {
     }
 
     @Override
-    public Map<Integer, Map<Double, SystemStats>> getStatsByRun() {
+    public Map<Integer, Map<Double, SystemStats>> getCollectedStats() {
         return statsByRun;
     }
 }

@@ -29,7 +29,7 @@ public class ZeroExperiment implements Experiment {
         }
 
         /* Write collected data to CSV */
-        SystemStatsCSV.systemStatsToCSV(collector.getStatsByRun());
+        SystemStatsCSV.systemStatsToCSV(collector.getCollectedStats());
     }
 
     private void runWork(int runId, double meanInterArrivalTime) throws IllegalLifeException {

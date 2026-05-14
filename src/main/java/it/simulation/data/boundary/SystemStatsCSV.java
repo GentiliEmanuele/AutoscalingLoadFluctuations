@@ -8,11 +8,12 @@ import java.io.IOException;
 import java.util.Map;
 
 import static it.simulation.configurations.Config.OUTPUT_PATH;
+import static it.simulation.configurations.Config.REPETITION_NUMBER;
 
 public class SystemStatsCSV {
 
     private final static String [] HEADER = {
-            "RunId",
+            REPETITION_NUMBER == 1 ? "Batch Id" : "Run Id",
             "Timestamp",
             "Throughput",
             "Utilization",
