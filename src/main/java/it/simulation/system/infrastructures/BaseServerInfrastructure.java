@@ -102,17 +102,19 @@ public class BaseServerInfrastructure implements Infrastructure {
         for (AbstractServer server : webServers) {
             totalCompletion += server.getServerStats().getCompletedJobs();
             totalBusyTime += server.getServerStats().getServiceSum();
-            server.getServerStats().setCurrOutputFrequency((double) server.getServerStats().getCompletedJobs() / currentTs);
+            server.getServerStats().setCurrOutputFrequency(currentTs > 0 ? (double) server.getServerStats().getCompletedJobs() / currentTs : 0);
         }
 
-        double webServersThroughput = totalCompletion / currentTs;
-        double busyWebServers = totalBusyTime / currentTs;
+        double webServersThroughput = currentTs > 0 ? totalCompletion / currentTs : 0;
+        double busyWebServers = currentTs > 0 ? totalBusyTime / currentTs : 0;
         double webServersUtilization = busyWebServers / 2;
-        double webServersServiceTime = totalBusyTime / totalCompletion;
+        double webServersServiceTime = totalCompletion > 0 ? totalBusyTime / totalCompletion : 0;
         double webServersResponseTime = 0.0;
 
         for (AbstractServer server : webServers) {
-            webServersResponseTime += (server.getServerStats().getCurrOutputFrequency() / webServersThroughput) * server.getServerStats().getCurrMeanResponseTime();
+            webServersResponseTime += webServersThroughput > 0 ?
+                    (server.getServerStats().getCurrOutputFrequency() / webServersThroughput) * server.getServerStats().getCurrMeanResponseTime() :
+                    0;
         }
 
         return new SystemStats(webServersThroughput, webServersUtilization, busyWebServers, webServersServiceTime, webServersResponseTime, totalCompletion, totalBusyTime);

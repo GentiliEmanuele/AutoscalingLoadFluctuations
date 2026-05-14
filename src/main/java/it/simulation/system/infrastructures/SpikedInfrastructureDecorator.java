@@ -90,18 +90,22 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
 
         double totalCompletion = baseSystemStats.getTotalCompletion() + spikeServer.getServerStats().getCompletedJobs();
         double totalBusyTime = baseSystemStats.getTotalBusyTime() + spikeServer.getServerStats().getServiceSum();
-        double meanBusyServers = totalBusyTime / currentTs;
+        double meanBusyServers = currentTs > 0 ? totalBusyTime / currentTs : 0;
         double meanUtilization = meanBusyServers / 2;
-        double totalThroughput = totalCompletion / currentTs;
-        double meanServiceTime = totalBusyTime / totalCompletion;
+        double totalThroughput = currentTs > 0 ? totalCompletion / currentTs : 0;
+        double meanServiceTime = totalCompletion > 0 ? totalBusyTime / totalCompletion : 0;
         double systemResponseTime = 0.0;
 
         for (AbstractServer webServer : base.webServers) {
-            systemResponseTime += (webServer.getServerStats().getCurrOutputFrequency() / totalThroughput) * webServer.getServerStats().getCurrMeanResponseTime();
+            systemResponseTime += totalThroughput > 0 ?
+                    (webServer.getServerStats().getCurrOutputFrequency() / totalThroughput) * webServer.getServerStats().getCurrMeanResponseTime() :
+                    0;
         }
 
-        double spikeServerOutputFrequency = spikeServer.getStats().getCompletedJobs() / currentTs;
-        systemResponseTime += spikeServerOutputFrequency / totalThroughput * spikeServer.getServerStats().getCurrMeanResponseTime();
+        double spikeServerOutputFrequency = currentTs > 0 ? spikeServer.getStats().getCompletedJobs() / currentTs : 0;
+        systemResponseTime += totalThroughput > 0 ?
+                spikeServerOutputFrequency / totalThroughput * spikeServer.getServerStats().getCurrMeanResponseTime() :
+                0;
 
         return new SystemStats(totalThroughput, meanUtilization, meanBusyServers, meanServiceTime, systemResponseTime, totalCompletion, totalBusyTime);
     }

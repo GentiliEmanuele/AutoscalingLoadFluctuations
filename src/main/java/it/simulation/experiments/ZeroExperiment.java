@@ -1,5 +1,8 @@
 package it.simulation.experiments;
 
+import it.simulation.data.boundary.SystemStatsCSV;
+import it.simulation.data.collectors.Collector;
+import it.simulation.data.collectors.CollectorFactory;
 import it.simulation.distributions.Distribution;
 import it.simulation.distributions.DistributionFactory;
 import it.simulation.events.*;
@@ -10,9 +13,11 @@ import static it.simulation.configurations.Config.*;
 
 public class ZeroExperiment implements Experiment {
     private final Rngs rngs;
+    private final Collector collector;
 
     public ZeroExperiment(Rngs rngs) {
         this.rngs = rngs;
+        this.collector = CollectorFactory.createCollector();
     }
 
 
@@ -22,11 +27,14 @@ public class ZeroExperiment implements Experiment {
         for (int i = 0; i < REPETITION_NUMBER; i++) {
             runWork(i, ARRIVALS_MU);
         }
+
+        /* Write collected data to CSV */
+        SystemStatsCSV.systemStatsToCSV(collector.getStatsByRun());
     }
 
-    private void runWork(int index, double meanInterArrivalTime) throws IllegalLifeException {
+    private void runWork(int runId, double meanInterArrivalTime) throws IllegalLifeException {
         /* Plant the first seed for the first run*/
-        if (index == 0) {
+        if (runId == 0) {
             rngs.plantSeeds(SEED);
         }
 
@@ -59,6 +67,9 @@ public class ZeroExperiment implements Experiment {
 
             /* Check that the next timestamp is greater than the previous one */
             assert s.getCurrent() < nextEvent.getTimestamp();
+
+            /* Send current data to collector */
+            collector.collect(runId, s.getCurrent(), s.getInfrastructure().computeSystemStats(s.getCurrent()));
 
             /* Process the next-event */
             nextEvent.process(s, visitor);
