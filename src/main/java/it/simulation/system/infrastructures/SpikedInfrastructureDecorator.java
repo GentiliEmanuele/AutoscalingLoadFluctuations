@@ -66,10 +66,26 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
     }
 
     @Override
-    public void printServerStats(double currentTs) {
+    public void printSystemStats(double currentTs) {
         System.out.print("\n\nSpikeServer : ");
         this.spikeServer.printServerStats(currentTs);
-        base.printServerStats(currentTs);
+        base.printSystemStats(currentTs);
+
+        System.out.println("\n\nSystem: ");
+        double totalCompletion = base.webServer.getServerStats().getCompletedJobs() + spikeServer.getStats().getCompletedJobs();
+        double totalBusyTime = base.webServer.getServerStats().getServiceSum() + spikeServer.getServerStats().getServiceSum();
+        double totalThroughput = totalCompletion / currentTs;
+        double webServerOutputFrequency = base.webServer.getServerStats().getCompletedJobs() / currentTs;
+        double spikeServerOutputFrequency = spikeServer.getStats().getCompletedJobs() / currentTs;
+
+        System.out.println("   total throughput ..... =     " + totalThroughput);
+        System.out.println("   mean utilization ..... =     " + (totalBusyTime / currentTs) / 2);
+        System.out.println("   average busy server .. =     " + totalBusyTime / currentTs);
+        System.out.println("   average service time . =     " + totalBusyTime / totalCompletion);
+        System.out.println("   average response time  =     " +
+                ((webServerOutputFrequency / totalThroughput) * base.webServer.getServerStats().getCurrMeanResponseTime() +
+                        (spikeServerOutputFrequency / totalThroughput) * spikeServer.getServerStats().getCurrMeanResponseTime())
+        );
     }
 
     @Override

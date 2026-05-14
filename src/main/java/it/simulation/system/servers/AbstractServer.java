@@ -80,6 +80,7 @@ public abstract class AbstractServer implements Server {
         System.out.println("   average service time .... =   " + format.format(stats.getServiceSum() / stats.getCompletedJobs()));
         System.out.println("   average # in the node ... =   " + format.format(stats.getNodeSum() / currentTs));
         System.out.println("   utilization ............. =   " + format.format(stats.getServiceSum() / currentTs));
+        System.out.println("   throughput  ............. =   " + format.format(stats.getCompletedJobs() / currentTs));
     }
 
     @Override

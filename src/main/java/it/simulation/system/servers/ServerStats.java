@@ -21,9 +21,9 @@ public class ServerStats {
     public ServerStats(ServerStats serverStats) {
         this.serverIndex            = serverStats.serverIndex;
         this.nodeSum                = serverStats.nodeSum;
-        this.serviceSum              = serverStats.serviceSum;
-        this.completedJobs           =   serverStats.completedJobs;
-        this.currMeanResponseTime = serverStats.currMeanResponseTime;
+        this.serviceSum             = serverStats.serviceSum;
+        this.completedJobs          = serverStats.completedJobs;
+        this.currMeanResponseTime   = serverStats.currMeanResponseTime;
     }
 
     public void updateServerStats(double startTs, double endTs, double jobNum, Double completedJobResponseTime, ServerState serverState) {

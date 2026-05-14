@@ -35,7 +35,7 @@ public class BaseServerInfrastructure implements Infrastructure {
     }
 
     @Override
-    public void printServerStats(double currentTs) {
+    public void printSystemStats(double currentTs) {
         System.out.print("\n\nWeb server : ");
         webServer.printServerStats(currentTs);
     }

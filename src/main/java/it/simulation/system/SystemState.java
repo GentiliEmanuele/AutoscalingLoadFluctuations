@@ -28,7 +28,7 @@ public class SystemState {
     }
 
     public void printStats() {
-        this.infrastructure.printServerStats(this.current);
+        this.infrastructure.printSystemStats(this.current);
     }
 
 }
