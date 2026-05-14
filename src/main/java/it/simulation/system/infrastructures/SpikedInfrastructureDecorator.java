@@ -1,6 +1,7 @@
 package it.simulation.system.infrastructures;
 
 import it.simulation.events.IllegalLifeException;
+import it.simulation.system.SystemStats;
 import it.simulation.system.jobs.Job;
 import it.simulation.system.servers.*;
 
@@ -20,7 +21,7 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
         this.spikeServer = new SpikeServer(SPIKE_CAPACITY);
         this.allServers = new ArrayList<>();
         this.allServers.add(this.spikeServer);
-        this.allServers.add(base.webServer);
+        this.allServers.addAll(base.webServers);
     }
 
     @Override
@@ -71,21 +72,38 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
         this.spikeServer.printServerStats(currentTs);
         base.printSystemStats(currentTs);
 
-        System.out.println("\n\nSystem: ");
-        double totalCompletion = base.webServer.getServerStats().getCompletedJobs() + spikeServer.getStats().getCompletedJobs();
-        double totalBusyTime = base.webServer.getServerStats().getServiceSum() + spikeServer.getServerStats().getServiceSum();
-        double totalThroughput = totalCompletion / currentTs;
-        double webServerOutputFrequency = base.webServer.getServerStats().getCompletedJobs() / currentTs;
-        double spikeServerOutputFrequency = spikeServer.getStats().getCompletedJobs() / currentTs;
+        // Compute system stats
+        SystemStats systemStats = computeSystemStats(currentTs);
 
-        System.out.println("   total throughput ..... =     " + totalThroughput);
-        System.out.println("   mean utilization ..... =     " + (totalBusyTime / currentTs) / 2);
-        System.out.println("   average busy server .. =     " + totalBusyTime / currentTs);
-        System.out.println("   average service time . =     " + totalBusyTime / totalCompletion);
-        System.out.println("   average response time  =     " +
-                ((webServerOutputFrequency / totalThroughput) * base.webServer.getServerStats().getCurrMeanResponseTime() +
-                        (spikeServerOutputFrequency / totalThroughput) * spikeServer.getServerStats().getCurrMeanResponseTime())
-        );
+        System.out.println("\n\nSystem: ");
+        System.out.println("   total throughput ..... =     " + systemStats.getThroughput());
+        System.out.println("   mean utilization ..... =     " + systemStats.getMeanUtilization());
+        System.out.println("   average busy server .. =     " + systemStats.getMeanBusyServer());
+        System.out.println("   average service time . =     " + systemStats.getMeanServiceTime());
+        System.out.println("   average response time  =     " + systemStats.getMeanResponseTime());
+    }
+
+    @Override
+    public SystemStats computeSystemStats(double currentTs) {
+        // This return web servers metrics
+        SystemStats baseSystemStats = base.computeSystemStats(currentTs);
+
+        double totalCompletion = baseSystemStats.getTotalCompletion() + spikeServer.getServerStats().getCompletedJobs();
+        double totalBusyTime = baseSystemStats.getTotalBusyTime() + spikeServer.getServerStats().getServiceSum();
+        double meanBusyServers = totalBusyTime / currentTs;
+        double meanUtilization = meanBusyServers / 2;
+        double totalThroughput = totalCompletion / currentTs;
+        double meanServiceTime = totalBusyTime / totalCompletion;
+        double systemResponseTime = 0.0;
+
+        for (AbstractServer webServer : base.webServers) {
+            systemResponseTime += (webServer.getServerStats().getCurrOutputFrequency() / totalThroughput) * webServer.getServerStats().getCurrMeanResponseTime();
+        }
+
+        double spikeServerOutputFrequency = spikeServer.getStats().getCompletedJobs() / currentTs;
+        systemResponseTime += spikeServerOutputFrequency / totalThroughput * spikeServer.getServerStats().getCurrMeanResponseTime();
+
+        return new SystemStats(totalThroughput, meanUtilization, meanBusyServers, meanServiceTime, systemResponseTime, totalCompletion, totalBusyTime);
     }
 
     @Override

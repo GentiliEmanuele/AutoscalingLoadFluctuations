@@ -85,7 +85,7 @@ public abstract class AbstractServer implements Server {
 
     @Override
     public ServerStats getServerStats() {
-        return new ServerStats(stats);
+        return stats;
     }
 
 }

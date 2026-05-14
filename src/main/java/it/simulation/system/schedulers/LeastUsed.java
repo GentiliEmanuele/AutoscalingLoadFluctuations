@@ -1,4 +1,4 @@
-package it.simulation.system.scheduler;
+package it.simulation.system.schedulers;
 
 import it.simulation.system.servers.AbstractServer;
 import it.simulation.system.servers.ServerState;

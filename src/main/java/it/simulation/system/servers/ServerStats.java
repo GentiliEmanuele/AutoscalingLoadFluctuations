@@ -1,6 +1,7 @@
 package it.simulation.system.servers;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class ServerStats {
@@ -9,7 +10,8 @@ public class ServerStats {
     private double serviceSum; /* mean population in service */
     private int completedJobs; /* number of completed jobs */
     private double currMeanResponseTime; /* current mean response time */
-
+    @Setter
+    private double currOutputFrequency;
 
     public ServerStats(int serverIndex){
         this.serverIndex            = serverIndex;

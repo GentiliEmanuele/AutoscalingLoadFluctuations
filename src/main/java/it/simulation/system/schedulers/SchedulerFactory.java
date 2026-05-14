@@ -1,4 +1,4 @@
-package it.simulation.system.scheduler;
+package it.simulation.system.schedulers;
 
 import static it.simulation.configurations.Config.SCHEDULER_TYPE;
 
