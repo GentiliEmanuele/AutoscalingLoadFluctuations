@@ -1,5 +1,6 @@
 package it.simulation.data.analyzers;
 
+import it.simulation.data.boundary.ConfidenceIntervalCSV;
 import it.simulation.system.SystemStats;
 
 import java.util.ArrayList;
@@ -11,17 +12,23 @@ import java.util.function.ToDoubleFunction;
 public class ReplicationAnalyzer implements Analyzer {
 
     private final List<SystemStats> runMeans;
+    private final Map<String, String> confidenceIntervals;
 
     public ReplicationAnalyzer() {
         runMeans = new ArrayList<>();
+        confidenceIntervals = new TreeMap<>();
     }
 
     @Override
     public void analyze(Map<Integer, Map<Double, SystemStats>> statsByRun) {
         computeReplicationStats(statsByRun);
-        computeStats("System response time", SystemStats::getMeanResponseTime);
+        computeStats("BusyServer", SystemStats::getMeanBusyServer);
+        computeStats("ResponseTime", SystemStats::getMeanResponseTime);
+        computeStats("ServiceTime", SystemStats::getMeanServiceTime);
         computeStats("Throughput", SystemStats::getThroughput);
         computeStats("Utilization", SystemStats::getMeanUtilization);
+
+        ConfidenceIntervalCSV.confidenceIntervalCSV(confidenceIntervals);
     }
 
     private void computeReplicationStats(Map<Integer, Map<Double, SystemStats>> statsByRun) {
@@ -80,5 +87,8 @@ public class ReplicationAnalyzer implements Analyzer {
         System.out.printf("[%s] Mean: %.6f | Variance: %.6f | Autocorrelation: %.6f\n",
                 label, mean, var, rho);
         System.out.printf("CI 95%%: [%.6f, %.6f] (± %.6f)\n", mean - halfWidth, mean + halfWidth, halfWidth);
+
+        // Save the confidence interval for write it into CSV file
+        confidenceIntervals.put(label, String.format("%.6f +/- %.6f", mean, halfWidth));
     }
 }
