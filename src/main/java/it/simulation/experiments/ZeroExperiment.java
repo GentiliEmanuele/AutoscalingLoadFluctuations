@@ -32,6 +32,7 @@ public class ZeroExperiment implements Experiment {
     public void run() throws IllegalLifeException {
         /* Execute the repetition with different values of interArrivalTime */
         for (int i = 0; i < REPETITION_NUMBER; i++) {
+            System.out.printf("\nRepetition %d/%d", i, REPETITION_NUMBER);
             runWork(i, ARRIVALS_MU);
         }
 
