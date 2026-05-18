@@ -1,5 +1,7 @@
 package it.simulation.experiments;
 
+import it.simulation.data.analyzers.Analyzer;
+import it.simulation.data.analyzers.AnalyzerFactory;
 import it.simulation.data.boundary.SystemStatsCSV;
 import it.simulation.data.collectors.Collector;
 import it.simulation.data.collectors.CollectorFactory;
@@ -8,16 +10,21 @@ import it.simulation.distributions.DistributionFactory;
 import it.simulation.events.*;
 import it.simulation.lib.Rngs;
 import it.simulation.system.SystemState;
+import it.simulation.system.SystemStats;
+
+import java.util.Map;
 
 import static it.simulation.configurations.Config.*;
 
 public class ZeroExperiment implements Experiment {
     private final Rngs rngs;
     private final Collector collector;
+    private final Analyzer analyzer;
 
     public ZeroExperiment(Rngs rngs) {
         this.rngs = rngs;
         this.collector = CollectorFactory.createCollector();
+        this.analyzer = AnalyzerFactory.createAnalyzer();
     }
 
 
@@ -29,7 +36,9 @@ public class ZeroExperiment implements Experiment {
         }
 
         /* Write collected data to CSV */
-        SystemStatsCSV.systemStatsToCSV(collector.getCollectedStats());
+        Map<Integer, Map<Double, SystemStats>> stats = collector.getCollectedStats();
+        analyzer.analyze(stats);
+        SystemStatsCSV.systemStatsToCSV(stats);
     }
 
     private void runWork(int runId, double meanInterArrivalTime) throws IllegalLifeException {
