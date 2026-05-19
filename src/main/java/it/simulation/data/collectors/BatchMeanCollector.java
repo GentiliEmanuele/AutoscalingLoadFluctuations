@@ -2,10 +2,14 @@ package it.simulation.data.collectors;
 
 import it.simulation.data.analyzers.Analyzer;
 import it.simulation.data.analyzers.AnalyzerFactory;
+import it.simulation.data.boundary.ServerStatsCSV;
 import it.simulation.data.boundary.SystemStatsCSV;
 import it.simulation.system.SystemStats;
 import it.simulation.system.infrastructures.Infrastructure;
+import it.simulation.system.servers.ServerStats;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -13,6 +17,7 @@ import static it.simulation.configurations.Config.BATCH_SIZE;
 
 public class BatchMeanCollector implements Collector {
     private final Map<Double, SystemStats> statsByTimestamp;
+    private final Map<Double, List<ServerStats>> serversStatsByTimestamp;
     private final Analyzer analyzer;
 
 
@@ -21,16 +26,19 @@ public class BatchMeanCollector implements Collector {
 
     public BatchMeanCollector(Analyzer analyzer) {
         this.statsByTimestamp = new TreeMap<>();
+        this.serversStatsByTimestamp = new TreeMap<>();
         this.analyzer = analyzer;
         this.baselineCompletion = 0;
     }
 
     @Override
     public void collect(double timestamp, Infrastructure infrastructure) {
-        // Compute system stats
+        // Compute system and servers stats stats
         SystemStats systemStats = infrastructure.computeSystemStats(timestamp);
-        // If is the first insert for the index current batch allocate the map
+        List<ServerStats> serverStats = infrastructure.getServersStats(timestamp);
+
         statsByTimestamp.put(timestamp, systemStats);
+        this.serversStatsByTimestamp.computeIfAbsent(timestamp, _ -> new ArrayList<>(serverStats));
 
         // The completions in this batch  are equals to the current completions minus the completions when the batch was opened
         int currentCompletion = systemStats.getTotalCompletion();
@@ -47,6 +55,8 @@ public class BatchMeanCollector implements Collector {
     public void analyzeAndPush(int runId) {
         analyzer.analyzePartially(statsByTimestamp);
         SystemStatsCSV.systemStatsToCSV(runId, statsByTimestamp);
+        ServerStatsCSV.serverStatsToCSV(runId, serversStatsByTimestamp);
         statsByTimestamp.clear();
+        serversStatsByTimestamp.clear();
     }
 }

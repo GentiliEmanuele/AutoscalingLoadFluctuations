@@ -5,10 +5,13 @@ import it.simulation.system.SystemStats;
 import it.simulation.system.jobs.Job;
 import it.simulation.system.servers.ServerStats;
 
+import java.util.List;
+
 public interface Infrastructure {
     void computeJobsAdvancement(double startTs, double endTs, boolean isCompletion) throws IllegalLifeException;
     void printSystemStats(double currentTs);
     SystemStats computeSystemStats(double currentTs);
+    List<ServerStats> getServersStats(double currentTs);
     void assignJob(Job job);
     double computeNextCompletionTs(double endTs);
     boolean activeJobExists();

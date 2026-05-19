@@ -118,6 +118,11 @@ public class BaseServerInfrastructure implements Infrastructure {
     }
 
     @Override
+    public List<ServerStats> getServersStats(double currentTs) {
+        return webServers.stream().map(AbstractServer::getServerStats).toList();
+    }
+
+    @Override
     public void assignJob(Job job) {
         List<AbstractServer> baseList = new ArrayList<>(this.webServers);
         AbstractServer target = scheduler.select(baseList);

@@ -99,6 +99,11 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
         return new SystemStats(totalThroughput, meanUtilization, meanBusyServers, meanServiceTime, systemResponseTime, totalCompletion, totalBusyTime);
     }
 
+    @Override
+    public List<ServerStats> getServersStats(double currentTs) {
+        return allServers.stream().map(AbstractServer::getServerStats).toList();
+    }
+
     private double getSystemResponseTime(double currentTs, double totalThroughput) {
         double systemResponseTime = 0.0;
 
