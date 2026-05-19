@@ -1,6 +1,7 @@
 package it.simulation.data.collectors;
 
 import it.simulation.system.SystemStats;
+import it.simulation.system.infrastructures.Infrastructure;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -14,7 +15,9 @@ public class ReplicationCollector implements Collector {
     }
 
     @Override
-    public void collect(int runId, double timestamp, SystemStats systemStats) {
+    public void collect(int runId, double timestamp, Infrastructure infrastructure) {
+        // Compute system stats
+        SystemStats systemStats = infrastructure.computeSystemStats(timestamp);
         // Check if already exists the temporal map for this run
         // If not create it and add the new stats
         this.statsByRun.computeIfAbsent(runId, _ -> new TreeMap<>())

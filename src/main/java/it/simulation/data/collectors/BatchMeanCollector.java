@@ -1,6 +1,7 @@
 package it.simulation.data.collectors;
 
 import it.simulation.system.SystemStats;
+import it.simulation.system.infrastructures.Infrastructure;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,7 +23,9 @@ public class BatchMeanCollector implements Collector {
     }
 
     @Override
-    public void collect(int runId, double timestamp, SystemStats systemStats) {
+    public void collect(int runId, double timestamp, Infrastructure infrastructure) {
+        // Compute system stats
+        SystemStats systemStats = infrastructure.computeSystemStats(timestamp);
         // If is the first insert for the index current batch allocate the map
         statsByBatch.computeIfAbsent(currentBatch, _ -> new TreeMap<>())
                 .put(timestamp, systemStats);

@@ -79,7 +79,7 @@ public class BaseExperiment implements Experiment {
             assert s.getCurrent() < nextEvent.getTimestamp();
 
             /* Send current data to collector */
-            collector.collect(runId, s.getCurrent(), s.getInfrastructure().computeSystemStats(s.getCurrent()));
+            collector.collect(runId, s.getCurrent(), s.getInfrastructure());
 
             /* Process the next-event */
             nextEvent.process(s, visitor);
