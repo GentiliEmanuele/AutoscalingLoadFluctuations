@@ -1,5 +1,8 @@
 package it.simulation.data.collectors;
 
+import it.simulation.data.analyzers.Analyzer;
+import it.simulation.data.analyzers.AnalyzerFactory;
+import it.simulation.data.boundary.SystemStatsCSV;
 import it.simulation.system.SystemStats;
 import it.simulation.system.infrastructures.Infrastructure;
 
@@ -8,29 +11,27 @@ import java.util.TreeMap;
 
 public class ReplicationCollector implements Collector {
 
-    private final Map<Integer, Map<Double, SystemStats>> statsByRun;
+    private final Map<Double, SystemStats> statsByTimestamp;
+    private final Analyzer analyzer;
 
-    public ReplicationCollector() {
-        this.statsByRun = new TreeMap<>();
+    public ReplicationCollector(Analyzer analyzer) {
+        this.statsByTimestamp = new TreeMap<>();
+        this.analyzer = analyzer;
     }
 
     @Override
-    public void collect(int runId, double timestamp, Infrastructure infrastructure) {
+    public void collect(double timestamp, Infrastructure infrastructure) {
         // Compute system stats
         SystemStats systemStats = infrastructure.computeSystemStats(timestamp);
-        // Check if already exists the temporal map for this run
-        // If not create it and add the new stats
-        this.statsByRun.computeIfAbsent(runId, _ -> new TreeMap<>())
-                .put(timestamp, systemStats);
+
+        // Save the current stats in a temporary map. This map will be cleared when a replica end and the mean was computed.
+        this.statsByTimestamp.put(timestamp, systemStats);
     }
 
     @Override
-    public Map<Integer, Map<Double, SystemStats>> getCollectedStats() {
-        return statsByRun;
-    }
-
-    @Override
-    public void clear() {
-        statsByRun.clear();
+    public void analyzeAndPush(int runId) {
+        analyzer.analyzePartially(statsByTimestamp);
+        SystemStatsCSV.systemStatsToCSV(runId, statsByTimestamp);
+        statsByTimestamp.clear();
     }
 }

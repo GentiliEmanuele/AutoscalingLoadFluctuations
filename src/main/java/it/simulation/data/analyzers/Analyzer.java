@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 import static it.simulation.configurations.Config.CONFIDENCE_LEVEL;
 
 public interface Analyzer {
-    void analyze(Map<Integer, Map<Double, SystemStats>> stats);
-    void clear();
+    void analyzePartially(Map<Double, SystemStats> stats);
+    void pushAndClear();
+    void computeConfidenceIntervals();
 
     static double computeMean(List<Double> means) {
         if (means.isEmpty()) return 0.0;

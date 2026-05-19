@@ -23,7 +23,7 @@ public class ConfidenceIntervalCSV {
     private static boolean isFirstWrite = true;
 
     public static void confidenceIntervalCSV(Map<String, String> confidenceIntervals) {
-        String outputPath = String.format("output/%s-ci", EXPERIMENT);
+        String outputPath = String.format("output/%s-ci.csv", EXPERIMENT);
         try(CSVWriter csvWriter = new CSVWriter(new FileWriter(outputPath, true))) {
 
             /* Write the header */

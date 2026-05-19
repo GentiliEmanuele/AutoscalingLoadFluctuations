@@ -2,7 +2,6 @@ package it.simulation.experiments;
 
 import it.simulation.data.analyzers.Analyzer;
 import it.simulation.data.analyzers.AnalyzerFactory;
-import it.simulation.data.boundary.SystemStatsCSV;
 import it.simulation.data.collectors.Collector;
 import it.simulation.data.collectors.CollectorFactory;
 import it.simulation.distributions.Distribution;
@@ -10,9 +9,6 @@ import it.simulation.distributions.DistributionFactory;
 import it.simulation.events.*;
 import it.simulation.lib.Rngs;
 import it.simulation.system.SystemState;
-import it.simulation.system.SystemStats;
-
-import java.util.Map;
 
 import static it.simulation.configurations.Config.*;
 
@@ -23,8 +19,8 @@ public class BaseExperiment implements Experiment {
 
     public BaseExperiment(Rngs rngs) {
         this.rngs = rngs;
-        this.collector = CollectorFactory.createCollector();
         this.analyzer = AnalyzerFactory.createAnalyzer();
+        this.collector = CollectorFactory.createCollector(analyzer);
     }
 
 
@@ -34,12 +30,11 @@ public class BaseExperiment implements Experiment {
         for (int i = 0; i < REPETITION_NUMBER; i++) {
             System.out.printf("\nRepetition %d/%d", i, REPETITION_NUMBER);
             runWork(i, ARRIVALS_MU);
+            collector.analyzeAndPush(i);
         }
 
-        /* Write collected data to CSV */
-        Map<Integer, Map<Double, SystemStats>> stats = collector.getCollectedStats();
-        analyzer.analyze(stats);
-        SystemStatsCSV.systemStatsToCSV(stats);
+        analyzer.computeConfidenceIntervals();
+        analyzer.pushAndClear();
     }
 
     protected void runWork(int runId, double meanInterArrivalTime) throws IllegalLifeException {
@@ -79,7 +74,7 @@ public class BaseExperiment implements Experiment {
             assert s.getCurrent() < nextEvent.getTimestamp();
 
             /* Send current data to collector */
-            collector.collect(runId, s.getCurrent(), s.getInfrastructure());
+            collector.collect(s.getCurrent(), s.getInfrastructure());
 
             /* Process the next-event */
             nextEvent.process(s, visitor);

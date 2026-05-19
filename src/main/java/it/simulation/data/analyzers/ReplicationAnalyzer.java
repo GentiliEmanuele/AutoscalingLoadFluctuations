@@ -20,65 +20,62 @@ public class ReplicationAnalyzer implements Analyzer {
     }
 
     @Override
-    public void analyze(Map<Integer, Map<Double, SystemStats>> statsByRun) {
-        computeReplicationStats(statsByRun);
-        computeStats("BusyServer", SystemStats::getMeanBusyServer);
-        computeStats("ResponseTime", SystemStats::getMeanResponseTime);
-        computeStats("ServiceTime", SystemStats::getMeanServiceTime);
-        computeStats("Throughput", SystemStats::getThroughput);
-        computeStats("Utilization", SystemStats::getMeanUtilization);
+    public void analyzePartially(Map<Double, SystemStats> runStats) {
+        TreeMap<Double, SystemStats> statsByTimestamp = (TreeMap<Double, SystemStats>) runStats;
 
-        ConfidenceIntervalCSV.confidenceIntervalCSV(confidenceIntervals);
+        // Get first and last run state
+        SystemStats start = statsByTimestamp.firstEntry().getValue();
+        SystemStats end = statsByTimestamp.lastEntry().getValue();
+
+        // Compute run duration
+        double deltaT = statsByTimestamp.lastEntry().getKey() - statsByTimestamp.firstEntry().getKey();
+
+        // Compute delta for completion and busy time
+        int deltaC = end.getTotalCompletion() - start.getTotalCompletion();
+        double deltaB = end.getTotalBusyTime() - start.getTotalBusyTime();
+
+        // Compute mean metrics in this run
+        double meanBusyServers = deltaB / deltaT;
+        double meanUtilization = meanBusyServers / 2; // TODO change based on effective num server
+        double meanThr = deltaC / deltaT;
+        double meanServiceTime = deltaB / deltaC;
+
+        // Compute mean response time in this run
+        double startTotalResponseTime = start.getMeanResponseTime() * start.getTotalCompletion();
+        double endTotalResponseTime = end.getMeanResponseTime() * end.getTotalCompletion();
+        double deltaResponseTime = endTotalResponseTime - startTotalResponseTime;
+        double meanResponseTime = deltaResponseTime / deltaC;
+
+        SystemStats currBatchSystemStats = new SystemStats(
+                meanThr,
+                meanUtilization,
+                meanBusyServers,
+                meanServiceTime,
+                meanResponseTime,
+                deltaC,
+                deltaB
+        );
+
+        runMeans.add(currBatchSystemStats);
     }
 
     @Override
-    public void clear() {
+    public void pushAndClear() {
+        ConfidenceIntervalCSV.confidenceIntervalCSV(confidenceIntervals);
         runMeans.clear();
         confidenceIntervals.clear();
     }
 
-    private void computeReplicationStats(Map<Integer, Map<Double, SystemStats>> statsByRun) {
-        for (Map.Entry<Integer, Map<Double, SystemStats>> entry : statsByRun.entrySet()) {
-            TreeMap<Double, SystemStats> statsByTimestamp = (TreeMap<Double, SystemStats>) entry.getValue();
-
-            // Get first and last run state
-            SystemStats start = statsByTimestamp.firstEntry().getValue();
-            SystemStats end = statsByTimestamp.lastEntry().getValue();
-
-            // Compute run duration
-            double deltaT = statsByTimestamp.lastEntry().getKey() - statsByTimestamp.firstEntry().getKey();
-
-            // Compute delta for completion and busy time
-            int deltaC = end.getTotalCompletion() - start.getTotalCompletion();
-            double deltaB = end.getTotalBusyTime() - start.getTotalBusyTime();
-
-            // Compute mean metrics in this run
-            double meanBusyServers = deltaB / deltaT;
-            double meanUtilization = meanBusyServers / 2; // TODO change based on effective num server
-            double meanThr = deltaC / deltaT;
-            double meanServiceTime = deltaB / deltaC;
-
-            // Compute mean response time in this run
-            double startTotalResponseTime = start.getMeanResponseTime() * start.getTotalCompletion();
-            double endTotalResponseTime = end.getMeanResponseTime() * end.getTotalCompletion();
-            double deltaResponseTime = endTotalResponseTime - startTotalResponseTime;
-            double meanResponseTime = deltaResponseTime / deltaC;
-
-            SystemStats currBatchSystemStats = new SystemStats(
-                    meanThr,
-                    meanUtilization,
-                    meanBusyServers,
-                    meanServiceTime,
-                    meanResponseTime,
-                    deltaC,
-                    deltaB
-            );
-
-            runMeans.add(currBatchSystemStats);
-        }
+    @Override
+    public void computeConfidenceIntervals() {
+        computeConfidenceInterval("BusyServer", SystemStats::getMeanBusyServer);
+        computeConfidenceInterval("ResponseTime", SystemStats::getMeanResponseTime);
+        computeConfidenceInterval("ServiceTime", SystemStats::getMeanServiceTime);
+        computeConfidenceInterval("Throughput", SystemStats::getThroughput);
+        computeConfidenceInterval("Utilization", SystemStats::getMeanUtilization);
     }
 
-    private void computeStats(String label, ToDoubleFunction<SystemStats> extractor) {
+    private void computeConfidenceInterval(String label, ToDoubleFunction<SystemStats> extractor) {
         // Extract desired values
         List<Double> values = Analyzer.extractMetric(this.runMeans, extractor);
 
