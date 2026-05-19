@@ -31,6 +31,12 @@ public class ReplicationAnalyzer implements Analyzer {
         ConfidenceIntervalCSV.confidenceIntervalCSV(confidenceIntervals);
     }
 
+    @Override
+    public void clear() {
+        runMeans.clear();
+        confidenceIntervals.clear();
+    }
+
     private void computeReplicationStats(Map<Integer, Map<Double, SystemStats>> statsByRun) {
         for (Map.Entry<Integer, Map<Double, SystemStats>> entry : statsByRun.entrySet()) {
             TreeMap<Double, SystemStats> statsByTimestamp = (TreeMap<Double, SystemStats>) entry.getValue();

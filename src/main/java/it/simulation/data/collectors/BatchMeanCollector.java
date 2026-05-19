@@ -42,4 +42,9 @@ public class BatchMeanCollector implements Collector {
     public Map<Integer, Map<Double, SystemStats>> getCollectedStats() {
         return statsByBatch;
     }
+
+    @Override
+    public void clear() {
+        statsByBatch.clear();
+    }
 }

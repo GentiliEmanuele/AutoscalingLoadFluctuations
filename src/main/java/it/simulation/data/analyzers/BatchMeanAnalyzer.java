@@ -26,6 +26,11 @@ public class BatchMeanAnalyzer implements Analyzer {
         System.out.printf("Batch num. %d \n", batchMeans.size());
     }
 
+    @Override
+    public void clear() {
+        batchMeans.clear();
+    }
+
     private void computeBatchesStats(Map<Integer, Map<Double, SystemStats>> statsByBatch) {
         for (Map.Entry<Integer, Map<Double, SystemStats>> entry : statsByBatch.entrySet()) {
             TreeMap<Double, SystemStats> statsByTimestamp = (TreeMap<Double, SystemStats>) entry.getValue();

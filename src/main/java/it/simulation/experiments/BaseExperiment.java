@@ -16,12 +16,12 @@ import java.util.Map;
 
 import static it.simulation.configurations.Config.*;
 
-public class ZeroExperiment implements Experiment {
+public class BaseExperiment implements Experiment {
     private final Rngs rngs;
-    private final Collector collector;
-    private final Analyzer analyzer;
+    protected final Collector collector;
+    protected final Analyzer analyzer;
 
-    public ZeroExperiment(Rngs rngs) {
+    public BaseExperiment(Rngs rngs) {
         this.rngs = rngs;
         this.collector = CollectorFactory.createCollector();
         this.analyzer = AnalyzerFactory.createAnalyzer();
@@ -42,7 +42,7 @@ public class ZeroExperiment implements Experiment {
         SystemStatsCSV.systemStatsToCSV(stats);
     }
 
-    private void runWork(int runId, double meanInterArrivalTime) throws IllegalLifeException {
+    protected void runWork(int runId, double meanInterArrivalTime) throws IllegalLifeException {
         /* Plant the first seed for the first run*/
         if (runId == 0) {
             rngs.plantSeeds(SEED);

@@ -12,6 +12,7 @@ import static it.simulation.configurations.Config.CONFIDENCE_LEVEL;
 
 public interface Analyzer {
     void analyze(Map<Integer, Map<Double, SystemStats>> stats);
+    void clear();
 
     static double computeMean(List<Double> means) {
         if (means.isEmpty()) return 0.0;

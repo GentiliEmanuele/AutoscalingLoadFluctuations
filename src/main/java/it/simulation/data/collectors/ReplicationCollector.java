@@ -25,4 +25,9 @@ public class ReplicationCollector implements Collector {
     public Map<Integer, Map<Double, SystemStats>> getCollectedStats() {
         return statsByRun;
     }
+
+    @Override
+    public void clear() {
+        statsByRun.clear();
+    }
 }
