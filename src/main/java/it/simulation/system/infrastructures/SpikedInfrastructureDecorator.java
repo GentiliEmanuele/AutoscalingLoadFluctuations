@@ -138,6 +138,11 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
         return base.activeJobExists() || spikeServer.activeJobExists();
     }
 
+    @Override
+    public ServerStats getServerStatsByIndex(int index, double currentTs) {
+        return new ServerStats(allServers.get(index).getServerStats());
+    }
+
     public int getNumWebServersByState(ServerState state) {
         return base.getNumWebServersByState(state);
     }

@@ -3,6 +3,7 @@ package it.simulation.system.infrastructures;
 import it.simulation.events.IllegalLifeException;
 import it.simulation.system.SystemStats;
 import it.simulation.system.jobs.Job;
+import it.simulation.system.servers.ServerStats;
 
 public interface Infrastructure {
     void computeJobsAdvancement(double startTs, double endTs, boolean isCompletion) throws IllegalLifeException;
@@ -11,4 +12,5 @@ public interface Infrastructure {
     void assignJob(Job job);
     double computeNextCompletionTs(double endTs);
     boolean activeJobExists();
+    ServerStats getServerStatsByIndex(int index, double currentTs);
 }

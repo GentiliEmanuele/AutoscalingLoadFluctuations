@@ -4,10 +4,7 @@ import it.simulation.system.SystemStats;
 import it.simulation.system.jobs.Job;
 import it.simulation.system.schedulers.Scheduler;
 import it.simulation.system.schedulers.SchedulerFactory;
-import it.simulation.system.servers.AbstractServer;
-import it.simulation.system.servers.Server;
-import it.simulation.system.servers.ServerState;
-import it.simulation.system.servers.WebServer;
+import it.simulation.system.servers.*;
 import lombok.Getter;
 
 
@@ -147,6 +144,11 @@ public class BaseServerInfrastructure implements Infrastructure {
             if (server.activeJobExists()) return true;
         }
         return false;
+    }
+
+    @Override
+    public ServerStats getServerStatsByIndex(int index, double currentTs) {
+        return new ServerStats(webServers.get(index).getServerStats());
     }
 
     public int getNumWebServersByState(ServerState state) {
