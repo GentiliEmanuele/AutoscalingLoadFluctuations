@@ -53,6 +53,7 @@ public class BatchMeanCollector implements Collector {
     @Override
     public void analyzeAndPush(int runId) {
         analyzer.analyzeSystemPartially(statsByTimestamp);
+        analyzer.analyzeServersPartially(serversStatsByTimestamp);
         SystemStatsCSV.systemStatsToCSV(runId, statsByTimestamp);
         ServerStatsCSV.serverStatsToCSV(runId, serversStatsByTimestamp);
         statsByTimestamp.clear();
