@@ -1,7 +1,6 @@
 package it.simulation.data.collectors;
 
 import it.simulation.data.analyzers.Analyzer;
-import it.simulation.data.analyzers.AnalyzerFactory;
 import it.simulation.data.boundary.ServerStatsCSV;
 import it.simulation.data.boundary.SystemStatsCSV;
 import it.simulation.system.SystemStats;
@@ -53,7 +52,7 @@ public class BatchMeanCollector implements Collector {
 
     @Override
     public void analyzeAndPush(int runId) {
-        analyzer.analyzePartially(statsByTimestamp);
+        analyzer.analyzeSystemPartially(statsByTimestamp);
         SystemStatsCSV.systemStatsToCSV(runId, statsByTimestamp);
         ServerStatsCSV.serverStatsToCSV(runId, serversStatsByTimestamp);
         statsByTimestamp.clear();

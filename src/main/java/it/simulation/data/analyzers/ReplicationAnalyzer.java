@@ -11,16 +11,16 @@ import java.util.function.ToDoubleFunction;
 
 public class ReplicationAnalyzer implements Analyzer {
 
-    private final List<SystemStats> runMeans;
+    private final List<SystemStats> systemRunMeans;
     private final Map<String, String> confidenceIntervals;
 
     public ReplicationAnalyzer() {
-        runMeans = new ArrayList<>();
+        systemRunMeans = new ArrayList<>();
         confidenceIntervals = new TreeMap<>();
     }
 
     @Override
-    public void analyzePartially(Map<Double, SystemStats> runStats) {
+    public void analyzeSystemPartially(Map<Double, SystemStats> runStats) {
         TreeMap<Double, SystemStats> statsByTimestamp = (TreeMap<Double, SystemStats>) runStats;
 
         // Get first and last run state
@@ -56,42 +56,28 @@ public class ReplicationAnalyzer implements Analyzer {
                 deltaB
         );
 
-        runMeans.add(currBatchSystemStats);
+        systemRunMeans.add(currBatchSystemStats);
     }
 
     @Override
     public void pushAndClear() {
         ConfidenceIntervalCSV.confidenceIntervalCSV(confidenceIntervals);
-        runMeans.clear();
+        systemRunMeans.clear();
         confidenceIntervals.clear();
     }
 
     @Override
     public void computeConfidenceIntervals() {
-        computeConfidenceInterval("BusyServer", SystemStats::getMeanBusyServer);
-        computeConfidenceInterval("ResponseTime", SystemStats::getMeanResponseTime);
-        computeConfidenceInterval("ServiceTime", SystemStats::getMeanServiceTime);
-        computeConfidenceInterval("Throughput", SystemStats::getThroughput);
-        computeConfidenceInterval("Utilization", SystemStats::getMeanUtilization);
+        computeCIAndPut("BusyServer", SystemStats::getMeanBusyServer);
+        computeCIAndPut("ResponseTime", SystemStats::getMeanResponseTime);
+        computeCIAndPut("ServiceTime", SystemStats::getMeanServiceTime);
+        computeCIAndPut("Throughput", SystemStats::getThroughput);
+        computeCIAndPut("Utilization", SystemStats::getMeanUtilization);
     }
 
-    private void computeConfidenceInterval(String label, ToDoubleFunction<SystemStats> extractor) {
-        // Extract desired values
-        List<Double> values = Analyzer.extractMetric(this.runMeans, extractor);
-
-        double mean = Analyzer.computeMean(values);
-        double var = Analyzer.computeVariance(values, mean);
-        double rho = Analyzer.computeAutocorrelation(values, mean, var);
-        double rhoLimit = 2 / Math.sqrt(runMeans.size());
-        double halfWidth = Analyzer.computeHalfWidth(values.size(), var);
-
-        if (rho > rhoLimit) System.out.printf("Autocorrelation is more than %.6f\n", rhoLimit);
-
-        System.out.printf("[%s] Mean: %.6f | Variance: %.6f | Autocorrelation: %.6f\n",
-                label, mean, var, rho);
-        System.out.printf("CI 95%%: [%.6f, %.6f] (± %.6f)\n", mean - halfWidth, mean + halfWidth, halfWidth);
-
-        // Save the confidence interval for write it into CSV file
-        confidenceIntervals.put(label, String.format("%.6f +/- %.6f", mean, halfWidth));
+    private void computeCIAndPut(String label, ToDoubleFunction<SystemStats> extractor) {
+        Map.Entry<String, String> ci = computeConfidenceInterval(systemRunMeans, label, extractor);
+        confidenceIntervals.put(ci.getKey(), ci.getValue());
     }
+
 }

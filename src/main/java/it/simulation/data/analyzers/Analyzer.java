@@ -1,6 +1,7 @@
 package it.simulation.data.analyzers;
 
 import it.simulation.system.SystemStats;
+import it.simulation.system.servers.ServerStats;
 import org.apache.commons.math3.distribution.TDistribution;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 import static it.simulation.configurations.Config.CONFIDENCE_LEVEL;
 
 public interface Analyzer {
-    void analyzePartially(Map<Double, SystemStats> stats);
+    void analyzeSystemPartially(Map<Double, SystemStats> stats);
     void pushAndClear();
     void computeConfidenceIntervals();
 
@@ -43,7 +44,7 @@ public interface Analyzer {
         return (covarianceSum / (n - 1)) / variance;
     }
 
-    static List<Double> extractMetric(List<SystemStats> stats, ToDoubleFunction<SystemStats> extractor) {
+    default <T> List<Double> extractMetric(List<T> stats, ToDoubleFunction<T> extractor) {
         return stats.stream()
                 .mapToDouble(extractor)
                 .boxed()
@@ -55,5 +56,24 @@ public interface Analyzer {
         double tCritical = Math.abs(tDist.inverseCumulativeProbability((1 - CONFIDENCE_LEVEL) / 2.0));
         double stdError = Math.sqrt(variance) / Math.sqrt(n);
         return tCritical * stdError;
+    }
+
+    default <T> Map.Entry<String, String> computeConfidenceInterval(List<T> inputStats, String label, ToDoubleFunction<T> extractor) {
+        // Extract desired values
+        List<Double> values = extractMetric(inputStats, extractor);
+
+        double mean = Analyzer.computeMean(values);
+        double var = Analyzer.computeVariance(values, mean);
+        double rho = Analyzer.computeAutocorrelation(values, mean, var);
+        double rhoLimit = 2 / Math.sqrt(inputStats.size());
+        double halfWidth = Analyzer.computeHalfWidth(values.size(), var);
+
+        if (rho > rhoLimit) System.out.printf("Autocorrelation is more than %.6f\n", rhoLimit);
+
+        System.out.printf("[%s] Mean: %.6f | Variance: %.6f | Autocorrelation: %.6f\n",
+                label, mean, var, rho);
+        System.out.printf("CI 95%%: [%.6f, %.6f] (± %.6f)\n", mean - halfWidth, mean + halfWidth, halfWidth);
+
+        return Map.entry(label, String.format("%.6f +/- %.6f", mean, halfWidth));
     }
 }

@@ -37,7 +37,7 @@ public class ReplicationCollector implements Collector {
 
     @Override
     public void analyzeAndPush(int runId) {
-        analyzer.analyzePartially(systemStatsByTimestamp);
+        analyzer.analyzeSystemPartially(systemStatsByTimestamp);
         SystemStatsCSV.systemStatsToCSV(runId, systemStatsByTimestamp);
         ServerStatsCSV.serverStatsToCSV(runId, serversStatsByTimestamp);
         systemStatsByTimestamp.clear();
