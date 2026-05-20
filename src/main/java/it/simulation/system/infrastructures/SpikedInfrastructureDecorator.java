@@ -101,7 +101,7 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
 
     @Override
     public List<ServerStats> getServersStats(double currentTs) {
-        return allServers.stream().map(AbstractServer::getServerStats).toList();
+        return allServers.stream().map(AbstractServer::getServerStats).map(ServerStats::new).toList();
     }
 
     private double getSystemResponseTime(double currentTs, double totalThroughput) {

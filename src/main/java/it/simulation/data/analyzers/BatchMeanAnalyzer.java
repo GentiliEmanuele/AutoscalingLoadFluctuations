@@ -1,8 +1,9 @@
 package it.simulation.data.analyzers;
 
 
-import it.simulation.data.boundary.ConfidenceIntervalCSV;
+import it.simulation.data.boundary.ConfidenceIntervalsCSV;
 import it.simulation.system.SystemStats;
+import it.simulation.system.servers.ServerStats;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,19 +62,29 @@ public class BatchMeanAnalyzer implements Analyzer {
     }
 
     @Override
+    public void analyzeServersPartially(Map<Double, List<ServerStats>> stats) {
+
+    }
+
+    @Override
     public void pushAndClear() {
-        ConfidenceIntervalCSV.confidenceIntervalCSV(confidenceIntervals);
+        ConfidenceIntervalsCSV.systemConfidenceIntervalCSV(confidenceIntervals);
         batchMeans.clear();
         confidenceIntervals.clear();
     }
 
     @Override
-    public void computeConfidenceIntervals() {
+    public void computeSystemConfidenceIntervals() {
         computeCIAndPut("BusyServer", SystemStats::getMeanBusyServer);
         computeCIAndPut("ResponseTime", SystemStats::getMeanResponseTime);
         computeCIAndPut("ServiceTime", SystemStats::getMeanServiceTime);
         computeCIAndPut("Throughput", SystemStats::getThroughput);
         computeCIAndPut("Utilization", SystemStats::getMeanUtilization);
+    }
+
+    @Override
+    public void computeServersConfidenceIntervals() {
+
     }
 
     private void computeCIAndPut(String label, ToDoubleFunction<SystemStats> extractor) {

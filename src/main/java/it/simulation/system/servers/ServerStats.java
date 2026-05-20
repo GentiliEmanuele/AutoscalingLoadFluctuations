@@ -28,6 +28,15 @@ public class ServerStats {
         this.currMeanResponseTime   = serverStats.currMeanResponseTime;
     }
 
+    public ServerStats(int serverIndex, double nodeSum, double serviceSum, int completedJobs, double currMeanResponseTime, double currOutputFrequency) {
+        this.serverIndex = serverIndex;
+        this.nodeSum = nodeSum;
+        this.serviceSum = serviceSum;
+        this.completedJobs = completedJobs;
+        this.currMeanResponseTime = currMeanResponseTime;
+        this.currOutputFrequency = currOutputFrequency;
+    }
+
     public void updateServerStats(double startTs, double endTs, double jobNum, Double completedJobResponseTime, ServerState serverState) {
 
         assert startTs >= 0 && endTs >= startTs && jobNum >= 0;

@@ -119,7 +119,7 @@ public class BaseServerInfrastructure implements Infrastructure {
 
     @Override
     public List<ServerStats> getServersStats(double currentTs) {
-        return webServers.stream().map(AbstractServer::getServerStats).toList();
+        return webServers.stream().map(AbstractServer::getServerStats).map(ServerStats::new).toList();
     }
 
     @Override

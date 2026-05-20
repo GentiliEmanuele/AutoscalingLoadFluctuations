@@ -41,7 +41,8 @@ public class BaseExp1 extends BaseExperiment {
                 collector.analyzeAndPush(i);
             }
 
-            analyzer.computeConfidenceIntervals();
+            analyzer.computeSystemConfidenceIntervals();
+            analyzer.computeServersConfidenceIntervals();
             analyzer.pushAndClear();
         }
     }

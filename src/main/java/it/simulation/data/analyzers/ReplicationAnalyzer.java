@@ -1,7 +1,8 @@
 package it.simulation.data.analyzers;
 
-import it.simulation.data.boundary.ConfidenceIntervalCSV;
+import it.simulation.data.boundary.ConfidenceIntervalsCSV;
 import it.simulation.system.SystemStats;
+import it.simulation.system.servers.ServerStats;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +13,15 @@ import java.util.function.ToDoubleFunction;
 public class ReplicationAnalyzer implements Analyzer {
 
     private final List<SystemStats> systemRunMeans;
-    private final Map<String, String> confidenceIntervals;
+    private final Map<String, String> systemConfidenceIntervals;
+    private final Map<Integer, List<ServerStats>> serverRunMeans;
+    private final Map<Integer, Map<String, String>> serversConfidenceIntervals;
 
     public ReplicationAnalyzer() {
         systemRunMeans = new ArrayList<>();
-        confidenceIntervals = new TreeMap<>();
+        systemConfidenceIntervals = new TreeMap<>();
+        serverRunMeans = new TreeMap<>();
+        serversConfidenceIntervals = new TreeMap<>();
     }
 
     @Override
@@ -60,24 +65,71 @@ public class ReplicationAnalyzer implements Analyzer {
     }
 
     @Override
-    public void pushAndClear() {
-        ConfidenceIntervalCSV.confidenceIntervalCSV(confidenceIntervals);
-        systemRunMeans.clear();
-        confidenceIntervals.clear();
+    public void analyzeServersPartially(Map<Double, List<ServerStats>> stats) {
+        TreeMap<Double, List<ServerStats>> statsByTimestamp = (TreeMap<Double, List<ServerStats>>) stats;
+
+        // Get first and last run state
+        List<ServerStats> start = statsByTimestamp.firstEntry().getValue();
+        List<ServerStats> end = statsByTimestamp.lastEntry().getValue();
+
+        // Compute run duration
+        double deltaT = statsByTimestamp.lastEntry().getKey() - statsByTimestamp.firstEntry().getKey();
+
+        for (int i = 0; i < end.size(); i++) {
+            analyzeServerPartially(start.get(i), end.get(i), deltaT);
+        }
     }
 
     @Override
-    public void computeConfidenceIntervals() {
-        computeCIAndPut("BusyServer", SystemStats::getMeanBusyServer);
-        computeCIAndPut("ResponseTime", SystemStats::getMeanResponseTime);
-        computeCIAndPut("ServiceTime", SystemStats::getMeanServiceTime);
-        computeCIAndPut("Throughput", SystemStats::getThroughput);
-        computeCIAndPut("Utilization", SystemStats::getMeanUtilization);
+    public void pushAndClear() {
+        ConfidenceIntervalsCSV.systemConfidenceIntervalCSV(systemConfidenceIntervals);
+        ConfidenceIntervalsCSV.serversConfidenceIntervalCSV(serversConfidenceIntervals);
+        systemRunMeans.clear();
+        systemConfidenceIntervals.clear();
+        serversConfidenceIntervals.clear();
     }
 
-    private void computeCIAndPut(String label, ToDoubleFunction<SystemStats> extractor) {
+    @Override
+    public void computeSystemConfidenceIntervals() {
+        computeSystemCIAndPut("BusyServer", SystemStats::getMeanBusyServer);
+        computeSystemCIAndPut("ResponseTime", SystemStats::getMeanResponseTime);
+        computeSystemCIAndPut("ServiceTime", SystemStats::getMeanServiceTime);
+        computeSystemCIAndPut("Throughput", SystemStats::getThroughput);
+        computeSystemCIAndPut("Utilization", SystemStats::getMeanUtilization);
+    }
+
+    @Override
+    public void computeServersConfidenceIntervals() {
+        for (Map.Entry<Integer, List<ServerStats>> means : serverRunMeans.entrySet()) {
+            computeServerCIAndPut(means.getKey(), "ResponseTime", means.getValue(), ServerStats::getCurrMeanResponseTime);
+            computeServerCIAndPut(means.getKey(), "Throughput", means.getValue(), ServerStats::getCurrOutputFrequency);
+        }
+    }
+
+    private void analyzeServerPartially(ServerStats start, ServerStats end, double deltaT) {
+        double deltaN = end.getNodeSum() - start.getNodeSum();
+        int deltaC = end.getCompletedJobs() - start.getCompletedJobs();
+        double deltaB = end.getServiceSum() - start.getServiceSum();
+
+        double outFreq = deltaC / deltaT;
+
+        double startTotalResponseTime = start.getCurrMeanResponseTime() * start.getCompletedJobs();
+        double endTotalResponseTime = end.getCurrMeanResponseTime() * end.getCompletedJobs();
+        double deltaResponseTime = endTotalResponseTime - startTotalResponseTime;
+        double meanResponseTime = deltaResponseTime / deltaC;
+
+        ServerStats currentServerStats = new ServerStats(start.getServerIndex(), deltaN, deltaB, deltaC, meanResponseTime, outFreq);
+        serverRunMeans.computeIfAbsent(start.getServerIndex(), _ -> new ArrayList<>()).add(currentServerStats);
+    }
+
+    private void computeSystemCIAndPut(String label, ToDoubleFunction<SystemStats> extractor) {
         Map.Entry<String, String> ci = computeConfidenceInterval(systemRunMeans, label, extractor);
-        confidenceIntervals.put(ci.getKey(), ci.getValue());
+        systemConfidenceIntervals.put(ci.getKey(), ci.getValue());
+    }
+
+    private void computeServerCIAndPut(int index, String label, List<ServerStats> serverStats, ToDoubleFunction<ServerStats> extractor) {
+        Map.Entry<String, String> ci = computeConfidenceInterval(serverStats, label, extractor);
+        serversConfidenceIntervals.computeIfAbsent(index, _ -> new TreeMap<>()).put(ci.getKey(), ci.getValue());
     }
 
 }

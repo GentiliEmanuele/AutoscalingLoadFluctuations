@@ -33,7 +33,8 @@ public class BaseExperiment implements Experiment {
             collector.analyzeAndPush(i);
         }
 
-        analyzer.computeConfidenceIntervals();
+        analyzer.computeSystemConfidenceIntervals();
+        analyzer.computeServersConfidenceIntervals();
         analyzer.pushAndClear();
     }
 

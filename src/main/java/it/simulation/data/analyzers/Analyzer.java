@@ -13,8 +13,10 @@ import static it.simulation.configurations.Config.CONFIDENCE_LEVEL;
 
 public interface Analyzer {
     void analyzeSystemPartially(Map<Double, SystemStats> stats);
+    void analyzeServersPartially(Map<Double, List<ServerStats>> stats);
     void pushAndClear();
-    void computeConfidenceIntervals();
+    void computeSystemConfidenceIntervals();
+    void computeServersConfidenceIntervals();
 
     static double computeMean(List<Double> means) {
         if (means.isEmpty()) return 0.0;
