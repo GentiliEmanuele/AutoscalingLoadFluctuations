@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.text.DecimalFormat;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Locale;
 
 import static it.simulation.configurations.Config.STOP;
@@ -17,6 +19,7 @@ public abstract class AbstractServer implements Server {
     @Getter protected double capacity;
     @Getter private final ServerStats stats;
     private final DecimalFormat format;
+    @Getter private Deque<Double> movingWindowResponseTime;
 
     public AbstractServer(double capacity, ServerState serverState, int index) {
         this.serverState = serverState;
@@ -25,6 +28,7 @@ public abstract class AbstractServer implements Server {
         this.stats = new ServerStats(index);
         this.format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
         this.format.applyPattern("###0.00000000");
+        this.movingWindowResponseTime = new ArrayDeque<>();
     }
 
     @Override
@@ -86,6 +90,19 @@ public abstract class AbstractServer implements Server {
     @Override
     public ServerStats getServerStats() {
         return stats;
+    }
+
+
+    public void resetMovingExpMeanResponseTime() {
+        this.movingWindowResponseTime = new ArrayDeque<>();
+    }
+
+    public double getWindowedMeanResponseTime() {
+        double sum = 0.0;
+        for(Double d : movingWindowResponseTime) {
+            sum += d / movingWindowResponseTime.size();
+        }
+        return sum;
     }
 
 }

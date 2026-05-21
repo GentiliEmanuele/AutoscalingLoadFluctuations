@@ -162,6 +162,12 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
         this.spikeServer.setCapacity(SPIKE_CAPACITY);
     }
 
+    @Override
+    public void scaleIn(double endTs) {
+        base.scaleIn(endTs);
+        this.spikeServer.setCapacity(SPIKE_CAPACITY);
+    }
+
     public int getNumWebServersByState(ServerState state) {
         return base.getNumWebServersByState(state);
     }

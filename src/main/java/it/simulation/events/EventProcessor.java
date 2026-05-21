@@ -118,6 +118,18 @@ public class EventProcessor implements EventVisitor{
 
     @Override
     public void visit(SystemState s, ScalingInEvent event) throws IllegalLifeException {
+        Infrastructure infrastructure = s.getInfrastructure();
+        double endTs = event.getTimestamp();
 
+        infrastructure.scaleIn(endTs);
+
+        s.addEvent(new ScalingInEvent(INFINITY));
+
+        /* Generate next completion */
+        double nextCompletionTs = infrastructure.activeJobExists() ? infrastructure.computeNextCompletionTs(endTs) : INFINITY;
+        Event nextCompletion = new CompletionEvent(nextCompletionTs);
+        s.addEvent(nextCompletion);
+
+        s.setCurrent(endTs);
     }
 }

@@ -206,6 +206,46 @@ public class BaseServerInfrastructure implements Infrastructure {
         targetWebServer.setServerState(ServerState.ACTIVE);
     }
 
+    WebServer findScaleInTarget() {
+        WebServer targetWebServer;
+
+        // Search if there is a server still active
+        targetWebServer = webServers.stream()
+                .filter(ws -> ws.getServerState() == ServerState.TO_BE_ACTIVE)
+                .max(Comparator.comparingDouble(webServers::indexOf))
+                .orElse(null);
+
+        // If no servers are to be active, look for an active one
+        if (targetWebServer == null) {
+            targetWebServer = webServers.stream()
+                    .filter(ws -> ws.getServerState() == ServerState.ACTIVE)
+                    .max(Comparator.comparingDouble(webServers::indexOf))
+                    .orElse(null);
+        }
+
+        return targetWebServer;
+    }
+
+
+    @Override
+    public void scaleIn(double endTs) {
+        WebServer minServer = findScaleInTarget();
+
+        /* If found server, make it to be removed */
+        if (minServer != null) {
+            if (minServer.size() == 0) {
+                minServer.setServerState(ServerState.REMOVED);
+                minServer.resetMovingExpMeanResponseTime();
+            } else {
+                minServer.setServerState(ServerState.TO_BE_REMOVED);
+                minServer.resetMovingExpMeanResponseTime();
+            }
+        }
+
+        /* If no server is found, only 1 server is active */
+        else System.out.println("No active servers found!");
+    }
+
     public int getNumWebServersByState(ServerState state) {
         return (int) webServers.stream().filter(server -> server.getServerState() == state).count();
     }
