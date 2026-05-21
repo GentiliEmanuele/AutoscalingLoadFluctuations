@@ -19,4 +19,5 @@ public interface Infrastructure {
     ServerStats getServerStatsByIndex(int index, double currentTs);
     WebServer requestScaleOut(double endTs, double turnOnTime);
     WebServer findNextScaleOut();
+    void scaleOut(double endTs, WebServer targetWebServer);
 }

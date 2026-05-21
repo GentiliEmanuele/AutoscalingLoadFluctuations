@@ -156,6 +156,12 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
         return base.findNextScaleOut();
     }
 
+    @Override
+    public void scaleOut(double endTs, WebServer targetWebServer) {
+        base.scaleOut(endTs, targetWebServer);
+        this.spikeServer.setCapacity(SPIKE_CAPACITY);
+    }
+
     public int getNumWebServersByState(ServerState state) {
         return base.getNumWebServersByState(state);
     }

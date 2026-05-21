@@ -201,6 +201,11 @@ public class BaseServerInfrastructure implements Infrastructure {
                 .orElse(null);
     }
 
+    @Override
+    public void scaleOut(double endTs, WebServer targetWebServer) {
+        targetWebServer.setServerState(ServerState.ACTIVE);
+    }
+
     public int getNumWebServersByState(ServerState state) {
         return (int) webServers.stream().filter(server -> server.getServerState() == state).count();
     }

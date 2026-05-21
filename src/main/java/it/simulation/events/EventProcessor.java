@@ -90,7 +90,30 @@ public class EventProcessor implements EventVisitor{
 
     @Override
     public void visit(SystemState s, ScalingOutEvent event) throws IllegalLifeException {
+        Infrastructure infrastructure = s.getInfrastructure();
 
+        /* Get the current clock and the one of this arrival */
+        double startTs = s.getCurrent();
+        double endTs = event.getTimestamp();
+
+        /* Advance job execution */
+        infrastructure.computeJobsAdvancement(startTs, endTs, false);
+
+        /* Set server to be effectively active */
+        infrastructure.scaleOut(endTs, event.getTarget());
+
+        /* Find the earliest WS to make active */
+        WebServer nextScaleOut = infrastructure.findNextScaleOut();
+        double nextActivationTS = nextScaleOut == null ? INFINITY : nextScaleOut.getActivationTimestamp();
+        s.addEvent(new ScalingOutEvent(nextActivationTS, nextScaleOut));
+
+        /* Generate next completion */
+        double nextCompletionTs = infrastructure.activeJobExists() ? infrastructure.computeNextCompletionTs(endTs) : INFINITY;
+        Event nextCompletion = new CompletionEvent(nextCompletionTs);
+        s.addEvent(nextCompletion);
+
+        /* Update the current system clock */
+        s.setCurrent(endTs);
     }
 
     @Override
