@@ -32,7 +32,7 @@ public class BatchMeanCollector implements Collector {
 
     @Override
     public void collect(double timestamp, Infrastructure infrastructure) {
-        // Compute system and servers stats stats
+        // Compute system and servers stats
         SystemStats systemStats = infrastructure.computeSystemStats(timestamp);
         List<ServerStats> serverStats = infrastructure.getServersStats(timestamp);
 

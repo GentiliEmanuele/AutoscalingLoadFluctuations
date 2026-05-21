@@ -85,6 +85,7 @@ public class ReplicationAnalyzer implements Analyzer {
         ConfidenceIntervalsCSV.systemConfidenceIntervalCSV(systemConfidenceIntervals);
         ConfidenceIntervalsCSV.serversConfidenceIntervalCSV(serversConfidenceIntervals);
         systemRunMeans.clear();
+        serverRunMeans.clear();
         systemConfidenceIntervals.clear();
         serversConfidenceIntervals.clear();
     }
