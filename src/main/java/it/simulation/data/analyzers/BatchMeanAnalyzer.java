@@ -42,7 +42,6 @@ public class BatchMeanAnalyzer implements Analyzer {
 
         // Compute mean metrics in this batch
         double meanBusyServers = deltaB / deltaT;
-        double meanUtilization = meanBusyServers / 2; // TODO change based on effective num server
         double meanThr = deltaC / deltaT;
         double meanServiceTime = deltaB / deltaC;
 
@@ -54,7 +53,6 @@ public class BatchMeanAnalyzer implements Analyzer {
 
         SystemStats currBatchSystemStats = new SystemStats(
                 meanThr,
-                meanUtilization,
                 meanBusyServers,
                 meanServiceTime,
                 meanResponseTime,
@@ -96,7 +94,6 @@ public class BatchMeanAnalyzer implements Analyzer {
         computeCIAndPut("ResponseTime", SystemStats::getMeanResponseTime);
         computeCIAndPut("ServiceTime", SystemStats::getMeanServiceTime);
         computeCIAndPut("Throughput", SystemStats::getThroughput);
-        computeCIAndPut("Utilization", SystemStats::getMeanUtilization);
     }
 
     @Override

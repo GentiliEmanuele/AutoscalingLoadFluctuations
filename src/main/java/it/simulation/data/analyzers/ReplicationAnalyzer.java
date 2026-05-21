@@ -41,7 +41,6 @@ public class ReplicationAnalyzer implements Analyzer {
 
         // Compute mean metrics in this run
         double meanBusyServers = deltaB / deltaT;
-        double meanUtilization = meanBusyServers / 2; // TODO change based on effective num server
         double meanThr = deltaC / deltaT;
         double meanServiceTime = deltaB / deltaC;
 
@@ -53,7 +52,6 @@ public class ReplicationAnalyzer implements Analyzer {
 
         SystemStats currBatchSystemStats = new SystemStats(
                 meanThr,
-                meanUtilization,
                 meanBusyServers,
                 meanServiceTime,
                 meanResponseTime,
@@ -96,7 +94,6 @@ public class ReplicationAnalyzer implements Analyzer {
         computeSystemCIAndPut("ResponseTime", SystemStats::getMeanResponseTime);
         computeSystemCIAndPut("ServiceTime", SystemStats::getMeanServiceTime);
         computeSystemCIAndPut("Throughput", SystemStats::getThroughput);
-        computeSystemCIAndPut("Utilization", SystemStats::getMeanUtilization);
     }
 
     @Override

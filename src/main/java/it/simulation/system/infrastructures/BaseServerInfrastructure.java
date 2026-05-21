@@ -84,7 +84,6 @@ public class BaseServerInfrastructure implements Infrastructure {
             SystemStats baseSystemStats = computeSystemStats(currentTs);
             System.out.println("\nSystem: ");
             System.out.println("   total throughput ..... =     " + baseSystemStats.getThroughput());
-            System.out.println("   mean utilization ..... =     " + baseSystemStats.getMeanUtilization());
             System.out.println("   average busy server .. =     " + baseSystemStats.getMeanBusyServer());
             System.out.println("   average service time . =     " + baseSystemStats.getMeanServiceTime());
             System.out.println("   average response time  =     " + baseSystemStats.getMeanResponseTime());
@@ -104,7 +103,6 @@ public class BaseServerInfrastructure implements Infrastructure {
 
         double webServersThroughput = currentTs > 0 ? totalCompletion / currentTs : 0;
         double busyWebServers = currentTs > 0 ? totalBusyTime / currentTs : 0;
-        double webServersUtilization = busyWebServers / 2;
         double webServersServiceTime = totalCompletion > 0 ? totalBusyTime / totalCompletion : 0;
         double webServersResponseTime = 0.0;
 
@@ -114,7 +112,7 @@ public class BaseServerInfrastructure implements Infrastructure {
                     0;
         }
 
-        return new SystemStats(webServersThroughput, webServersUtilization, busyWebServers, webServersServiceTime, webServersResponseTime, totalCompletion, totalBusyTime);
+        return new SystemStats(webServersThroughput, busyWebServers, webServersServiceTime, webServersResponseTime, totalCompletion, totalBusyTime);
     }
 
     @Override

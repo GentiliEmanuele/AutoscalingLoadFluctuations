@@ -15,7 +15,6 @@ public class SystemStatsCSV {
             REPETITION_NUMBER == 1 ? "Batch Id" : "Run Id",
             "Timestamp",
             "Throughput",
-            "Utilization",
             "BusyServer",
             "ServiceTime",
             "ResponseTime"
@@ -47,7 +46,6 @@ public class SystemStatsCSV {
                 String.valueOf(runId),
                 String.valueOf(timestamp),
                 String.valueOf(systemStats.getThroughput()),
-                String.valueOf(systemStats.getMeanUtilization()),
                 String.valueOf(systemStats.getMeanBusyServer()),
                 String.valueOf(systemStats.getMeanServiceTime()),
                 String.valueOf(systemStats.getMeanResponseTime())

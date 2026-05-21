@@ -16,7 +16,6 @@ public class ConfidenceIntervalsCSV {
             "ResponseTime",
             "ServiceTime",
             "Throughput",
-            "Utilization",
     };
 
     private final static String [] SERVERS_HEADER = {
