@@ -1,7 +1,6 @@
 package it.simulation.data.collectors;
 
 import it.simulation.data.analyzers.Analyzer;
-import it.simulation.data.boundary.ServerStatsCSV;
 import it.simulation.data.boundary.SystemStatsCSV;
 import it.simulation.system.SystemStats;
 import it.simulation.system.infrastructures.Infrastructure;
@@ -13,6 +12,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static it.simulation.configurations.Config.BATCH_SIZE;
+import static it.simulation.configurations.Config.LOG_FINE;
 
 public class BatchMeanCollector implements Collector {
     private final Map<Double, SystemStats> statsByTimestamp;
@@ -54,8 +54,7 @@ public class BatchMeanCollector implements Collector {
     public void analyzeAndPush(int runId) {
         analyzer.analyzeSystemPartially(statsByTimestamp);
         analyzer.analyzeServersPartially(serversStatsByTimestamp);
-        SystemStatsCSV.systemStatsToCSV(runId, statsByTimestamp);
-        ServerStatsCSV.serverStatsToCSV(runId, serversStatsByTimestamp);
+        if (LOG_FINE) SystemStatsCSV.systemStatsToCSV(runId, statsByTimestamp);
         statsByTimestamp.clear();
         serversStatsByTimestamp.clear();
     }

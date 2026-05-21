@@ -35,6 +35,7 @@ public class Config {
     public static double CONFIDENCE_LEVEL;
     public static String OUTPUT_PATH;
     public static int BATCH_SIZE;
+    public static boolean LOG_FINE;
 
     static {
         readConfiguration();
@@ -73,6 +74,7 @@ public class Config {
             CONFIDENCE_LEVEL = Double.parseDouble(props.getProperty("confidence.level"));
             OUTPUT_PATH = props.getProperty("output.path");
             BATCH_SIZE = Integer.parseInt(props.getProperty("batch.size"));
+            LOG_FINE = Boolean.parseBoolean(props.getProperty("log.fine"));
         } catch (IOException e) {
             throw new ExceptionInInitializerError(
                     "Impossible loading " + CONFIG_FILE + ": " + e.getMessage());

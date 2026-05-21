@@ -1,7 +1,6 @@
 package it.simulation.data.collectors;
 
 import it.simulation.data.analyzers.Analyzer;
-import it.simulation.data.boundary.ServerStatsCSV;
 import it.simulation.data.boundary.SystemStatsCSV;
 import it.simulation.system.SystemStats;
 import it.simulation.system.infrastructures.Infrastructure;
@@ -11,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import static it.simulation.configurations.Config.LOG_FINE;
 
 public class ReplicationCollector implements Collector {
 
@@ -39,8 +40,7 @@ public class ReplicationCollector implements Collector {
     public void analyzeAndPush(int runId) {
         analyzer.analyzeSystemPartially(systemStatsByTimestamp);
         analyzer.analyzeServersPartially(serversStatsByTimestamp);
-        SystemStatsCSV.systemStatsToCSV(runId, systemStatsByTimestamp);
-        ServerStatsCSV.serverStatsToCSV(runId, serversStatsByTimestamp);
+        if (LOG_FINE) SystemStatsCSV.systemStatsToCSV(runId, systemStatsByTimestamp);
         systemStatsByTimestamp.clear();
         serversStatsByTimestamp.clear();
     }
