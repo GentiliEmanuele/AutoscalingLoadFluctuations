@@ -9,6 +9,7 @@ import lombok.Getter;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -152,6 +153,52 @@ public class BaseServerInfrastructure implements Infrastructure {
     @Override
     public ServerStats getServerStatsByIndex(int index, double currentTs) {
         return new ServerStats(webServers.get(index).getServerStats());
+    }
+
+    WebServer findScaleOutTarget() {
+        WebServer targetWebServer;
+
+        // Search if there is a server still active but to be removed
+        targetWebServer = webServers.stream()
+                .filter(ws -> ws.getServerState() == ServerState.TO_BE_REMOVED)
+                .min(Comparator.comparingDouble(webServers::indexOf))
+                .orElse(null);
+
+        // If no servers are active but to be removed, look for a removed one
+        if (targetWebServer == null) {
+            targetWebServer = webServers.stream()
+                    .filter(ws -> ws.getServerState() == ServerState.REMOVED)
+                    .min(Comparator.comparingDouble(webServers::indexOf))
+                    .orElse(null);
+        }
+
+        return targetWebServer;
+    }
+
+    @Override
+    public WebServer requestScaleOut(double endTs, double turnOnTime) {
+        WebServer targetWebServer = findScaleOutTarget();
+
+        /* If found server, make it active */
+        if (targetWebServer != null) {
+            targetWebServer.setServerState(ServerState.TO_BE_ACTIVE);
+            targetWebServer.setActivationTimestamp(endTs + turnOnTime);
+
+            return targetWebServer;
+        }
+
+        /* If no server is found, all servers are active */
+        else System.out.println("All servers are active");
+
+        return null;
+    }
+
+    @Override
+    public WebServer findNextScaleOut() {
+        return webServers.stream()
+                .filter(ws -> ws.getServerState() == ServerState.TO_BE_ACTIVE)
+                .min(Comparator.comparingDouble(WebServer::getActivationTimestamp))
+                .orElse(null);
     }
 
     public int getNumWebServersByState(ServerState state) {

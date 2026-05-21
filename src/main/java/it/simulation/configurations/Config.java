@@ -36,6 +36,8 @@ public class Config {
     public static String OUTPUT_PATH;
     public static int BATCH_SIZE;
     public static boolean LOG_FINE;
+    public static double TURN_ON_MU;
+    public static double TURN_ON_STD;
 
     static {
         readConfiguration();
@@ -75,6 +77,9 @@ public class Config {
             OUTPUT_PATH = props.getProperty("output.path");
             BATCH_SIZE = Integer.parseInt(props.getProperty("batch.size"));
             LOG_FINE = Boolean.parseBoolean(props.getProperty("log.fine"));
+            TURN_ON_MU = Double.parseDouble(props.getProperty("turn.on.mu"));
+            TURN_ON_STD = Double.parseDouble(props.getProperty("turn.on.std"));
+
         } catch (IOException e) {
             throw new ExceptionInInitializerError(
                     "Impossible loading " + CONFIG_FILE + ": " + e.getMessage());

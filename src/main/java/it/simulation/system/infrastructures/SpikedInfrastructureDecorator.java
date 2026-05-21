@@ -146,6 +146,16 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
         return new ServerStats(allServers.get(index).getServerStats());
     }
 
+    @Override
+    public WebServer requestScaleOut(double endTs, double turnOnTime) {
+        return base.requestScaleOut(endTs, turnOnTime);
+    }
+
+    @Override
+    public WebServer findNextScaleOut() {
+        return base.findNextScaleOut();
+    }
+
     public int getNumWebServersByState(ServerState state) {
         return base.getNumWebServersByState(state);
     }

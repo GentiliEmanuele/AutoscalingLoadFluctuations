@@ -50,6 +50,7 @@ public class BaseExperiment implements Experiment {
         /* Create the distribution for services and arrival */
         Distribution arrivalVA = DistributionFactory.createArrivalDistribution(rngs);
         Distribution servicesVA = DistributionFactory.createServiceDistribution(rngs);
+        Distribution turnOnVa = DistributionFactory.createTurnOnDistribution(rngs);
 
         /* Set the current meanInterArrivalTime as mean of arrivalVA */
         arrivalVA.setMean(meanInterArrivalTime);
@@ -65,7 +66,7 @@ public class BaseExperiment implements Experiment {
         calendar.addEvent(firstCompletion);
 
         /* Set up the system state */
-        SystemState s = new SystemState(calendar, servicesVA, arrivalVA);
+        SystemState s = new SystemState(calendar, servicesVA, arrivalVA, turnOnVa);
 
         while (Experiment.continueSimulating(s)) {
             /* Compute the next event */

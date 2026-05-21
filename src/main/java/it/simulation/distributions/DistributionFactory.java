@@ -20,4 +20,8 @@ public class DistributionFactory {
             default -> throw new IllegalArgumentException("Invalid service distribution type: " + SERVICE_DISTRIBUTION);
         };
     }
+
+    public static Distribution createTurnOnDistribution(Rngs rngs) {
+        return new Normal(rngs, 6, 7, TURN_ON_MU, TURN_ON_STD);
+    }
 }

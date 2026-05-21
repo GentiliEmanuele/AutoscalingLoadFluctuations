@@ -15,12 +15,14 @@ public class SystemState {
     private final EventCalendar calendar;
     private final Distribution servicesVA;
     private final Distribution arrivalVA;
+    private final Distribution turnOnVA;
 
-    public SystemState(EventCalendar calendar, Distribution servicesVA, Distribution arrivalVA) {
+    public SystemState(EventCalendar calendar, Distribution servicesVA, Distribution arrivalVA, Distribution turnOnVA) {
         this.infrastructure = InfrastructureFactory.createInfrastructure();
         this.calendar = calendar;
         this.servicesVA = servicesVA;
         this.arrivalVA = arrivalVA;
+        this.turnOnVA = turnOnVA;
     }
 
     public void addEvent(Event event) {

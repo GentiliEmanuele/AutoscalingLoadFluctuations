@@ -3,6 +3,7 @@ package it.simulation.events;
 import it.simulation.system.SystemState;
 import it.simulation.system.infrastructures.Infrastructure;
 import it.simulation.system.jobs.Job;
+import it.simulation.system.servers.WebServer;
 
 import static it.simulation.configurations.Config.INFINITY;
 import static it.simulation.configurations.Config.STOP;
@@ -62,5 +63,38 @@ public class EventProcessor implements EventVisitor{
 
         /* Update the current system clock */
         s.setCurrent(endTs);
+    }
+
+    @Override
+    public void visit(SystemState s, ScalingOutReqEvent event) throws IllegalLifeException {
+        Infrastructure infrastructure = s.getInfrastructure();
+        double endTs = event.getTimestamp();
+
+        /* Generate time for turn on a web sever */
+        double turnOnTime = s.getTurnOnVA().gen();
+
+        // From request to effective scale out
+        var serverTarget = infrastructure.requestScaleOut(endTs, turnOnTime);
+
+        /* Find the earliest WS to make active: it needs to be done
+           in case no scaling out event is already scheduled */
+        WebServer nextScaleOut = infrastructure.findNextScaleOut();
+        s.addEvent(new ScalingOutEvent(nextScaleOut.getActivationTimestamp(), nextScaleOut));
+
+        // Schedule to INFINITY the next request
+        s.addEvent(new ScalingOutReqEvent(INFINITY));
+
+        /* Update the current system clock */
+        s.setCurrent(endTs);
+    }
+
+    @Override
+    public void visit(SystemState s, ScalingOutEvent event) throws IllegalLifeException {
+
+    }
+
+    @Override
+    public void visit(SystemState s, ScalingInEvent event) throws IllegalLifeException {
+
     }
 }
