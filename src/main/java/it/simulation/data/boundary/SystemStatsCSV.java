@@ -21,7 +21,7 @@ public class SystemStatsCSV {
     };
 
     public static void systemStatsToCSV(int runId, Map<Double, SystemStats> runStats) {
-        String outputPath = String.format("output/%s.csv", EXPERIMENT);
+        String outputPath = String.format("%s/%s.csv", OUTPUT_DIR, EXPERIMENT);
         try(CSVWriter csvWriter = new CSVWriter(new FileWriter(outputPath, true))) {
             /* Write the header */
             csvWriter.writeNext(HEADER);

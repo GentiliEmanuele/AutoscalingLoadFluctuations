@@ -33,7 +33,7 @@ public class Config {
     public static String EXPERIMENT;
     public static int REPETITION_NUMBER;
     public static double CONFIDENCE_LEVEL;
-    public static String OUTPUT_PATH;
+    public static String OUTPUT_DIR;
     public static int BATCH_SIZE;
     public static boolean LOG_FINE;
     public static double TURN_ON_MU;
@@ -77,7 +77,7 @@ public class Config {
             EXPERIMENT = props.getProperty("experiment");
             REPETITION_NUMBER = Integer.parseInt(props.getProperty("repetition.number"));
             CONFIDENCE_LEVEL = Double.parseDouble(props.getProperty("confidence.level"));
-            OUTPUT_PATH = props.getProperty("output.path");
+            OUTPUT_DIR = props.getProperty("output.dir");
             BATCH_SIZE = Integer.parseInt(props.getProperty("batch.size"));
             LOG_FINE = Boolean.parseBoolean(props.getProperty("log.fine"));
             TURN_ON_MU = Double.parseDouble(props.getProperty("turn.on.mu"));
