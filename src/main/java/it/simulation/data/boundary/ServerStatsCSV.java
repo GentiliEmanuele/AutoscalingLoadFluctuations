@@ -24,11 +24,16 @@ public class ServerStatsCSV {
             "ResponseTime"
     };
 
+    private static boolean isFirstWrite = true;
+
     public static void  serverStatsToCSV(int runId, Map<Double, List<ServerStats>> runStats) {
         String outputPath = String.format("output/%s_servers_stats.csv", EXPERIMENT);
         try(CSVWriter csvWriter = new CSVWriter(new FileWriter(outputPath, true))) {
             /* Write the header */
-            csvWriter.writeNext(HEADER);
+            if (isFirstWrite) {
+                csvWriter.writeNext(HEADER);
+                isFirstWrite = false;
+            }
 
             for (Map.Entry<Double, List<ServerStats>> statsByTimestamp : runStats.entrySet()) {
                 double timestamp = statsByTimestamp.getKey();

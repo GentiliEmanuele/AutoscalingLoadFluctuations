@@ -20,11 +20,16 @@ public class SystemStatsCSV {
             "ResponseTime"
     };
 
+    private static boolean isFirstWrite = true;
+
     public static void systemStatsToCSV(int runId, Map<Double, SystemStats> runStats) {
         String outputPath = String.format("%s/%s.csv", OUTPUT_DIR, EXPERIMENT);
         try(CSVWriter csvWriter = new CSVWriter(new FileWriter(outputPath, true))) {
             /* Write the header */
-            csvWriter.writeNext(HEADER);
+            if (isFirstWrite) {
+                csvWriter.writeNext(HEADER);
+                isFirstWrite = false;
+            }
 
             /* Iterate on timestamp */
             for (Map.Entry<Double, SystemStats> statsByTimestamp : runStats.entrySet()) {
