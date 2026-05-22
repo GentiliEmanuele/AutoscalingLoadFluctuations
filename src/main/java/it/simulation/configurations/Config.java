@@ -38,6 +38,9 @@ public class Config {
     public static boolean LOG_FINE;
     public static double TURN_ON_MU;
     public static double TURN_ON_STD;
+    public static String SCALING_INDICATOR_TYPE;
+    public static double SCALING_OUT_THRESHOLD;
+    public static int SLIDING_WINDOW_SIZE;
 
     static {
         readConfiguration();
@@ -79,6 +82,9 @@ public class Config {
             LOG_FINE = Boolean.parseBoolean(props.getProperty("log.fine"));
             TURN_ON_MU = Double.parseDouble(props.getProperty("turn.on.mu"));
             TURN_ON_STD = Double.parseDouble(props.getProperty("turn.on.std"));
+            SCALING_INDICATOR_TYPE = props.getProperty("scaling.indicator.type");
+            SCALING_OUT_THRESHOLD = Double.parseDouble(props.getProperty("scaling.out.threshold"));
+            SLIDING_WINDOW_SIZE = Integer.parseInt(props.getProperty("sliding.window.size"));
 
         } catch (IOException e) {
             throw new ExceptionInInitializerError(

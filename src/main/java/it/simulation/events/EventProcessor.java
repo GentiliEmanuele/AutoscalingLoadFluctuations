@@ -3,10 +3,10 @@ package it.simulation.events;
 import it.simulation.system.SystemState;
 import it.simulation.system.infrastructures.Infrastructure;
 import it.simulation.system.jobs.Job;
+import it.simulation.system.servers.ServerState;
 import it.simulation.system.servers.WebServer;
 
-import static it.simulation.configurations.Config.INFINITY;
-import static it.simulation.configurations.Config.STOP;
+import static it.simulation.configurations.Config.*;
 
 public class EventProcessor implements EventVisitor{
     @Override
@@ -18,7 +18,12 @@ public class EventProcessor implements EventVisitor{
         double startTs = s.getCurrent();
         double endTs = event.getTimestamp();
 
-        infrastructure.computeJobsAdvancement(startTs, endTs, false);
+        double scalingIndicator = infrastructure.computeJobsAdvancement(startTs, endTs, false);
+
+        /* Plan scaling */
+        if(SCALING_INDICATOR_TYPE.equals("jobs")) {
+            planScaling(s, endTs, scalingIndicator);
+        }
 
         /* Add the next job to the list */
         double nextServiceLife = s.getServicesVA().gen();
@@ -54,7 +59,10 @@ public class EventProcessor implements EventVisitor{
         double endTs = event.getTimestamp();
 
         /* Compute job advancement */
-        infrastructure.computeJobsAdvancement(startTs, endTs, true);
+        double scalingIndicator = infrastructure.computeJobsAdvancement(startTs, endTs, true);
+
+        /* Plan scaling */
+        planScaling(s, endTs, scalingIndicator);
 
         /* Generate next completion */
         double nextCompletionTs = infrastructure.activeJobExists() ? infrastructure.computeNextCompletionTs(endTs) : INFINITY;
@@ -131,5 +139,37 @@ public class EventProcessor implements EventVisitor{
         s.addEvent(nextCompletion);
 
         s.setCurrent(endTs);
+    }
+
+
+    private void planScaling(SystemState s, double endTs, double scalingIndicator){
+        Infrastructure infrastructure = s.getInfrastructure();
+        if (SCALING_OUT_THRESHOLD != INFINITY){
+            boolean scalingOutPossible;
+            boolean scalingOutCondition;
+            boolean scalingInPossible;
+            boolean scalingInCondition;
+            int activatedServer = infrastructure.getNumWebServersByState(ServerState.ACTIVE) + infrastructure.getNumWebServersByState(ServerState.TO_BE_ACTIVE);
+
+            scalingOutPossible = activatedServer < MAX_NUM_SERVERS;
+            scalingInPossible = infrastructure.getNumWebServersByState(ServerState.ACTIVE) > 1;
+
+            if (SCALING_INDICATOR_TYPE.equals("r0")) {
+                scalingOutCondition = scalingIndicator > SCALING_OUT_THRESHOLD * 1.5;
+                scalingInCondition = scalingIndicator < SCALING_OUT_THRESHOLD * 0.5;
+            } else if (SCALING_INDICATOR_TYPE.equals("jobs")) {
+                int expectedServers = (int) (Math.ceil(scalingIndicator / SCALING_OUT_THRESHOLD));
+                scalingOutCondition = activatedServer < expectedServers;
+                scalingInCondition = activatedServer > expectedServers;
+            } else {
+                throw new IllegalArgumentException("Invalid SCALING_INDICATOR_TYPE");
+            }
+
+            if (scalingOutCondition && scalingOutPossible)
+                s.addEvent(new ScalingOutReqEvent(endTs));
+            else if (scalingInCondition && scalingInPossible)
+                s.addEvent(new ScalingInEvent(endTs));
+        }
+
     }
 }

@@ -25,7 +25,7 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
     }
 
     @Override
-    public void computeJobsAdvancement(double startTs, double endTs, boolean isCompletion) throws IllegalLifeException {
+    public double computeJobsAdvancement(double startTs, double endTs, boolean isCompletion) throws IllegalLifeException {
         Integer completionServerIndex = null;
         Double completedJobResponseTime = null;
         Job completedJob;
@@ -45,6 +45,9 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
                     startTs, endTs,
                     Objects.equals(currIndex, completionServerIndex) ? completedJobResponseTime : null);
         }
+
+        this.updateScalingIndicator();
+        return base.scalingIndicator;
     }
 
     private int getCompletingServerIndex() {
@@ -168,7 +171,28 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
         this.spikeServer.setCapacity(SPIKE_CAPACITY);
     }
 
+    @Override
     public int getNumWebServersByState(ServerState state) {
         return base.getNumWebServersByState(state);
+    }
+
+    void updateScalingIndicator() {
+        if (SCALING_INDICATOR_TYPE.equals("r0")) {
+            base.scalingIndicator = 0.0;
+            List<AbstractServer> activeServers = allServers.stream()
+                    .filter(ws -> ws.getServerState() == ServerState.ACTIVE)
+                    .toList();
+
+            for (AbstractServer server : activeServers) {
+                base.scalingIndicator += server.getWindowedMeanResponseTime() / activeServers.size();
+            }
+        } else if (SCALING_INDICATOR_TYPE.equals("jobs")) {
+            base.scalingIndicator = allServers.stream()
+                    .filter(ws -> ws.getServerState() == ServerState.ACTIVE || ws.getServerState() == ServerState.TO_BE_REMOVED)
+                    .map(AbstractServer::size)
+                    .reduce(0, Integer::sum);
+        } else {
+            throw new IllegalArgumentException("Invalid type of scaling indicator");
+        }
     }
 }

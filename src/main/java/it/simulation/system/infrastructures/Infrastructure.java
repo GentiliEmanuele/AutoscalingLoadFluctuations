@@ -3,13 +3,15 @@ package it.simulation.system.infrastructures;
 import it.simulation.events.IllegalLifeException;
 import it.simulation.system.SystemStats;
 import it.simulation.system.jobs.Job;
+import it.simulation.system.servers.ServerState;
 import it.simulation.system.servers.ServerStats;
 import it.simulation.system.servers.WebServer;
 
 import java.util.List;
 
 public interface Infrastructure {
-    void computeJobsAdvancement(double startTs, double endTs, boolean isCompletion) throws IllegalLifeException;
+    int getNumWebServersByState(ServerState state);;
+    double computeJobsAdvancement(double startTs, double endTs, boolean isCompletion) throws IllegalLifeException;
     void printSystemStats(double currentTs);
     SystemStats computeSystemStats(double currentTs);
     List<ServerStats> getServersStats(double currentTs);

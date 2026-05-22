@@ -18,6 +18,7 @@ import static it.simulation.configurations.Config.*;
 public class BaseServerInfrastructure implements Infrastructure {
     @Getter  final Scheduler scheduler;
     final List<WebServer> webServers;
+    double scalingIndicator;
 
 
     public BaseServerInfrastructure() {
@@ -31,7 +32,7 @@ public class BaseServerInfrastructure implements Infrastructure {
 
 
     @Override
-    public void computeJobsAdvancement(double startTs, double endTs, boolean isCompletion) throws IllegalLifeException {
+    public double computeJobsAdvancement(double startTs, double endTs, boolean isCompletion) throws IllegalLifeException {
         Integer completionServerIndex = null;
         Double completedJobResponseTime = null;
         Job completedJob;
@@ -52,6 +53,9 @@ public class BaseServerInfrastructure implements Infrastructure {
                     startTs, endTs,
                     Objects.equals(currIndex, completionServerIndex) ? completedJobResponseTime : null);
         }
+
+        this.updateScalingIndicator();
+        return this.scalingIndicator;
     }
 
     private int getCompletingServerIndex() {
@@ -246,6 +250,7 @@ public class BaseServerInfrastructure implements Infrastructure {
         else System.out.println("No active servers found!");
     }
 
+    @Override
     public int getNumWebServersByState(ServerState state) {
         return (int) webServers.stream().filter(server -> server.getServerState() == state).count();
     }
@@ -256,6 +261,26 @@ public class BaseServerInfrastructure implements Infrastructure {
             size += server.size();
         }
         return size;
+    }
+
+    void updateScalingIndicator() {
+        if (SCALING_INDICATOR_TYPE.equals("r0")) {
+            this.scalingIndicator = 0.0;
+            List<WebServer> activeServers = webServers.stream()
+                    .filter(ws -> ws.getServerState() == ServerState.ACTIVE)
+                    .toList();
+
+            for (AbstractServer server : activeServers) {
+                this.scalingIndicator += server.getWindowedMeanResponseTime() / activeServers.size();
+            }
+        } else if (SCALING_INDICATOR_TYPE.equals("jobs")) {
+            this.scalingIndicator = webServers.stream()
+                    .filter(ws -> ws.getServerState() == ServerState.ACTIVE || ws.getServerState() == ServerState.TO_BE_REMOVED)
+                    .map(AbstractServer::size)
+                    .reduce(0, Integer::sum);
+        } else {
+            throw new IllegalArgumentException("Invalid type of scaling indicator");
+        }
     }
 
 }

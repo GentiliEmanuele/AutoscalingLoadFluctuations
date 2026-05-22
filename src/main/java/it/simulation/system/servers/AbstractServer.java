@@ -11,6 +11,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Locale;
 
+import static it.simulation.configurations.Config.SLIDING_WINDOW_SIZE;
 import static it.simulation.configurations.Config.STOP;
 
 public abstract class AbstractServer implements Server {
@@ -37,6 +38,14 @@ public abstract class AbstractServer implements Server {
         int jobAdvanced = jobs.size() + completedJob;
 
         stats.updateServerStats(startTs, endTs, jobAdvanced, completedJobResponseTime, this.serverState);
+
+        // Update moving window response time
+        if(completedJob == 1) {
+            if(this.movingWindowResponseTime.size() == SLIDING_WINDOW_SIZE) {
+                this.movingWindowResponseTime.removeFirst();
+            }
+            this.movingWindowResponseTime.addLast(completedJobResponseTime);
+        }
 
         double quantum = (this.capacity / jobAdvanced) * (endTs - startTs);
 
