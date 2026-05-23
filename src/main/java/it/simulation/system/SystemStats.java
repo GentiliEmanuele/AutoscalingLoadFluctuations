@@ -20,4 +20,8 @@ public class SystemStats {
         this.totalCompletion = totalCompletion;
         this.totalBusyTime = totalBusyTime;
     }
+
+    public double getMeanPopulation() {
+        return throughput * meanResponseTime;
+    }
 }

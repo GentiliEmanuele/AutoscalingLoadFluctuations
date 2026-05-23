@@ -94,6 +94,7 @@ public class BatchMeanAnalyzer implements Analyzer {
         computeCIAndPut("ResponseTime", SystemStats::getMeanResponseTime);
         computeCIAndPut("ServiceTime", SystemStats::getMeanServiceTime);
         computeCIAndPut("Throughput", SystemStats::getThroughput);
+        computeCIAndPut("Population", SystemStats::getMeanPopulation);
     }
 
     @Override

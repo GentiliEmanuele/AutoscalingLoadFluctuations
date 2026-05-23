@@ -94,6 +94,7 @@ public class ReplicationAnalyzer implements Analyzer {
         computeSystemCIAndPut("ResponseTime", SystemStats::getMeanResponseTime);
         computeSystemCIAndPut("ServiceTime", SystemStats::getMeanServiceTime);
         computeSystemCIAndPut("Throughput", SystemStats::getThroughput);
+        computeSystemCIAndPut("Population", SystemStats::getMeanPopulation);
     }
 
     @Override
