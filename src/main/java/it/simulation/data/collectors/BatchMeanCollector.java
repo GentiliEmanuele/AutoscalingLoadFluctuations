@@ -1,6 +1,7 @@
 package it.simulation.data.collectors;
 
 import it.simulation.data.analyzers.Analyzer;
+import it.simulation.data.boundary.ServersJobsNumberByTimestamp;
 import it.simulation.data.boundary.SystemStatsCSV;
 import it.simulation.system.SystemStats;
 import it.simulation.system.infrastructures.Infrastructure;
@@ -11,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static it.simulation.configurations.Config.BATCH_SIZE;
-import static it.simulation.configurations.Config.LOG_FINE;
+import static it.simulation.configurations.Config.*;
 
 public class BatchMeanCollector implements Collector {
     private final Map<Double, SystemStats> statsByTimestamp;
     private final Map<Double, List<ServerStats>> serversStatsByTimestamp;
+    private final Map<Integer, Map<Double, Integer>> serversJobsNumberByTimestamp;
     private final Analyzer analyzer;
 
 
@@ -28,6 +29,7 @@ public class BatchMeanCollector implements Collector {
         this.serversStatsByTimestamp = new TreeMap<>();
         this.analyzer = analyzer;
         this.baselineCompletion = 0;
+        this.serversJobsNumberByTimestamp = new TreeMap<>();
     }
 
     @Override
@@ -43,6 +45,8 @@ public class BatchMeanCollector implements Collector {
         int currentCompletion = systemStats.getTotalCompletion();
         int completionInThisBatch = currentCompletion - this.baselineCompletion;
 
+        Collector.collectServersJobsNumber(serversJobsNumberByTimestamp, serverStats, timestamp);
+
         // If the completions in the current batch are more than BATCH_SIZE compute stats for this batch, save data in a CSV file and delete data
         if (completionInThisBatch >= BATCH_SIZE) {
             analyzeAndPush(0);
@@ -54,8 +58,12 @@ public class BatchMeanCollector implements Collector {
     public void analyzeAndPush(int runId) {
         analyzer.analyzeSystemPartially(statsByTimestamp);
         analyzer.analyzeServersPartially(serversStatsByTimestamp);
-        if (LOG_FINE) SystemStatsCSV.systemStatsToCSV(runId, statsByTimestamp);
+        if (LOG_FINE) {
+            SystemStatsCSV.systemStatsToCSV(runId, statsByTimestamp);
+            ServersJobsNumberByTimestamp.serversJobsNumberByTimestampCSV(serversJobsNumberByTimestamp);
+        }
         statsByTimestamp.clear();
         serversStatsByTimestamp.clear();
+        serversJobsNumberByTimestamp.clear();
     }
 }

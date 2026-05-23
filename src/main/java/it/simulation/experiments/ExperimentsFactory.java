@@ -1,5 +1,6 @@
 package it.simulation.experiments;
 
+import it.simulation.configurations.ValidationBaseConfigurations;
 import it.simulation.configurations.VerificationBaseConfiguration;
 import it.simulation.lib.Rngs;
 
@@ -17,6 +18,10 @@ public class ExperimentsFactory {
             case "ver-base" -> {
                 VerificationBaseConfiguration.setVerificationBaseConfiguration();
                 return new VerificationBase(rngs);
+            }
+            case "val-base-1" -> {
+                ValidationBaseConfigurations.setValidationBaseConfigurationFirst();
+                return new ValidationBaseExperiments(rngs);
             }
         };
 
