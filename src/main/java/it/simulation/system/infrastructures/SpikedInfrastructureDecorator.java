@@ -128,6 +128,7 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
             base.assignJob(job);
         } else {
             spikeServer.addJob(job);
+            spikeServer.getServerStats().incrementArrivedJobs();
         }
     }
 

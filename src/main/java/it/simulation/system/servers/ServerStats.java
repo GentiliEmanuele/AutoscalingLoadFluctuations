@@ -8,6 +8,7 @@ public class ServerStats {
     private final int serverIndex; /* server index */
     private double nodeSum; /* mean population in the node */
     private double serviceSum; /* mean population in service */
+    private int arrivedJobs; /* number of arrived jobs */
     private int completedJobs; /* number of completed jobs */
     private double currMeanResponseTime; /* current mean response time */
     @Setter
@@ -18,6 +19,7 @@ public class ServerStats {
         this.nodeSum                = 0.0;
         this.serviceSum             = 0.0;
         this.completedJobs          =   0;
+        this.arrivedJobs           =   0;
     }
 
     public ServerStats(ServerStats serverStats) {
@@ -25,16 +27,18 @@ public class ServerStats {
         this.nodeSum                = serverStats.nodeSum;
         this.serviceSum             = serverStats.serviceSum;
         this.completedJobs          = serverStats.completedJobs;
+        this.arrivedJobs           = serverStats.arrivedJobs;
         this.currMeanResponseTime   = serverStats.currMeanResponseTime;
     }
 
-    public ServerStats(int serverIndex, double nodeSum, double serviceSum, int completedJobs, double currMeanResponseTime, double currOutputFrequency) {
+    public ServerStats(int serverIndex, double nodeSum, double serviceSum, int completedJobs, int arrivedJobs, double currMeanResponseTime, double currOutputFrequency) {
         this.serverIndex = serverIndex;
         this.nodeSum = nodeSum;
         this.serviceSum = serviceSum;
         this.completedJobs = completedJobs;
         this.currMeanResponseTime = currMeanResponseTime;
         this.currOutputFrequency = currOutputFrequency;
+        this.arrivedJobs = arrivedJobs;
     }
 
     public void updateServerStats(double startTs, double endTs, double jobNum, Double completedJobResponseTime, ServerState serverState) {
@@ -52,6 +56,10 @@ public class ServerStats {
             this.completedJobs++;
             currMeanResponseTime += (completedJobResponseTime - currMeanResponseTime) / completedJobs;
         }
+    }
+
+    public void incrementArrivedJobs() {
+        this.arrivedJobs++;
     }
 
 }

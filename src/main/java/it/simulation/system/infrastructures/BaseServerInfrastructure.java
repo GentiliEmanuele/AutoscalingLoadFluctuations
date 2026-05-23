@@ -129,6 +129,7 @@ public class BaseServerInfrastructure implements Infrastructure {
     public void assignJob(Job job) {
         List<AbstractServer> baseList = new ArrayList<>(this.webServers);
         AbstractServer target = scheduler.select(baseList);
+        target.getStats().incrementArrivedJobs();
         target.addJob(job);
     }
 

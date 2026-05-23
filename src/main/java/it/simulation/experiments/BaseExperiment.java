@@ -9,6 +9,8 @@ import it.simulation.distributions.DistributionFactory;
 import it.simulation.events.*;
 import it.simulation.lib.Rngs;
 import it.simulation.system.SystemState;
+import it.simulation.system.infrastructures.Infrastructure;
+import it.simulation.system.servers.ServerStats;
 
 import static it.simulation.configurations.Config.*;
 
@@ -82,6 +84,18 @@ public class BaseExperiment implements Experiment {
             nextEvent.process(s, visitor);
         }
 
+        assertArrivalsAndCompletionsEquality(s.getInfrastructure(), s.getCurrent());
+
         s.printStats();
+    }
+
+    private void assertArrivalsAndCompletionsEquality(Infrastructure infrastructure, double lastTs) {
+        // Assertion can be verified only if EMPTY_JOBS is true
+        if (!EMPTY_JOBS) return;
+
+        for (ServerStats serverStats : infrastructure.getServersStats(lastTs)) {
+            assert serverStats.getArrivedJobs() == serverStats.getCompletedJobs() :
+                "There are arrived jobs that are not completed";
+        }
     }
 }

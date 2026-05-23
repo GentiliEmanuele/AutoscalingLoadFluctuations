@@ -112,6 +112,7 @@ public class BatchMeanAnalyzer implements Analyzer {
     private void analyzeServerPartially(ServerStats start, ServerStats end, double deltaT) {
         double deltaN = end.getNodeSum() - start.getNodeSum();
         int deltaC = end.getCompletedJobs() - start.getCompletedJobs();
+        int deltaA = end.getArrivedJobs() - start.getArrivedJobs();
         double deltaB = end.getServiceSum() - start.getServiceSum();
 
         double outFreq = deltaC / deltaT;
@@ -121,7 +122,7 @@ public class BatchMeanAnalyzer implements Analyzer {
         double deltaResponseTime = endTotalResponseTime - startTotalResponseTime;
         double meanResponseTime = deltaResponseTime / deltaC;
 
-        ServerStats currentServerStats = new ServerStats(start.getServerIndex(), deltaN, deltaB, deltaC, meanResponseTime, outFreq);
+        ServerStats currentServerStats = new ServerStats(start.getServerIndex(), deltaN, deltaB, deltaC, deltaA, meanResponseTime, outFreq);
         serverBatchMeans.computeIfAbsent(start.getServerIndex(), _ -> new ArrayList<>()).add(currentServerStats);
     }
 
