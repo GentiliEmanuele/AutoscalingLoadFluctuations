@@ -12,6 +12,7 @@ public class ConfidenceIntervalsCSV {
 
     private final static String [] SYSTEM_HEADER = {
             "SI_MAX",
+            "Service distribution",
             "BusyServer",
             "ResponseTime",
             "ServiceTime",
@@ -21,6 +22,7 @@ public class ConfidenceIntervalsCSV {
 
     private final static String [] SERVERS_HEADER = {
             "SI_MAX",
+            "Service distribution",
             "ServerIndex",
             "ResponseTime",
             "Throughput"
@@ -42,7 +44,8 @@ public class ConfidenceIntervalsCSV {
             // Map metrics CI and columns
             String[] row = new String[SYSTEM_HEADER.length];
             row[0] = String.valueOf(SI_MAX);
-            for (int i = 1; i < SYSTEM_HEADER.length; i++) {
+            row[1] = String.valueOf(SERVICE_DISTRIBUTION);
+            for (int i = 2; i < SYSTEM_HEADER.length; i++) {
                 String metricName = SYSTEM_HEADER[i];
                 row[i] = confidenceIntervals.getOrDefault(metricName, "");
             }
@@ -66,10 +69,11 @@ public class ConfidenceIntervalsCSV {
 
             String[] row = new String[SERVERS_HEADER.length];
             row[0] = String.valueOf(SI_MAX);
+            row[1] = String.valueOf(SERVICE_DISTRIBUTION);
             for (Map.Entry<Integer, Map<String, String>> cis : serversConfidenceIntervals.entrySet()) {
-                row[1] = String.valueOf(cis.getKey());
+                row[2] = String.valueOf(cis.getKey());
 
-                for (int i = 2; i < SERVERS_HEADER.length; i++) {
+                for (int i = 3; i < SERVERS_HEADER.length; i++) {
                     String metricName = SERVERS_HEADER[i];
                     row[i] = cis.getValue().getOrDefault(metricName, "");
                 }
