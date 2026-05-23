@@ -37,7 +37,7 @@ public class BaseExp1 extends BaseExperiment {
             for (int i = 0; i < REPETITION_NUMBER; i++) {
                 SI_MAX = si_max;
                 System.out.printf("\nRepetition %d/%d for SI_MAX = %d", i, REPETITION_NUMBER, si_max);
-                runWork(i, ARRIVALS_MU);
+                runWork(i);
                 collector.analyzeAndPush(i);
             }
 

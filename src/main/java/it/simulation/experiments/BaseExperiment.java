@@ -31,7 +31,7 @@ public class BaseExperiment implements Experiment {
         /* Execute the repetition with different values of interArrivalTime */
         for (int i = 0; i < REPETITION_NUMBER; i++) {
             System.out.printf("\nRepetition %d/%d", i, REPETITION_NUMBER);
-            runWork(i, ARRIVALS_MU);
+            runWork(i);
             collector.analyzeAndPush(i);
         }
 
@@ -40,7 +40,7 @@ public class BaseExperiment implements Experiment {
         analyzer.pushAndClear();
     }
 
-    protected void runWork(int runId, double meanInterArrivalTime) throws IllegalLifeException {
+    protected void runWork(int runId) throws IllegalLifeException {
         /* Plant the first seed for the first run*/
         if (runId == 0) {
             rngs.plantSeeds(SEED);
@@ -55,7 +55,7 @@ public class BaseExperiment implements Experiment {
         Distribution turnOnVa = DistributionFactory.createTurnOnDistribution(rngs);
 
         /* Set the current meanInterArrivalTime as mean of arrivalVA */
-        arrivalVA.setMean(meanInterArrivalTime);
+        arrivalVA.setMean(ARRIVALS_MU);
 
         /* Compute first arrival time */
         double nextArrival = arrivalVA.gen();
