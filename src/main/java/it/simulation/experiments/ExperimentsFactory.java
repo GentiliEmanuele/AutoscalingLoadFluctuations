@@ -21,7 +21,11 @@ public class ExperimentsFactory {
             }
             case "val-base-1" -> {
                 ValidationBaseConfigurations.setValidationBaseConfigurationFirst();
-                return new ValidationBaseExperiments(rngs);
+                return new ValidationBaseExperimentFirst(rngs);
+            }
+            case "val-base-2" -> {
+                ValidationBaseConfigurations.setValidationBaseConfigurationSecond();
+                return new ValidationBaseExperimentSecond(rngs);
             }
         };
 
