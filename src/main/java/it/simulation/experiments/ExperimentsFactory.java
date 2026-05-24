@@ -1,5 +1,6 @@
 package it.simulation.experiments;
 
+import it.simulation.configurations.TransitoryBaseConfigurations;
 import it.simulation.configurations.ValidationBaseConfigurations;
 import it.simulation.configurations.VerificationBaseConfiguration;
 import it.simulation.lib.Rngs;
@@ -26,6 +27,18 @@ public class ExperimentsFactory {
             case "val-base-2" -> {
                 ValidationBaseConfigurations.setValidationBaseConfigurationSecond();
                 return new ValidationBaseExperimentSecond(rngs);
+            }
+            case "trans-b-1" -> {
+                TransitoryBaseConfigurations.setTransitoryBaseConfiguration(10);
+                return new TransitoryBaseExperiments(rngs);
+            }
+            case "trans-b-2" -> {
+                TransitoryBaseConfigurations.setTransitoryBaseConfiguration(80);
+                return new TransitoryBaseExperiments(rngs);
+            }
+            case "trans-b-3" -> {
+                TransitoryBaseConfigurations.setTransitoryBaseConfiguration(160);
+                return new TransitoryBaseExperiments(rngs);
             }
         };
 
