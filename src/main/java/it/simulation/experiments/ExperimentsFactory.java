@@ -1,5 +1,6 @@
 package it.simulation.experiments;
 
+import it.simulation.configurations.BaseExperimentsConfigurations;
 import it.simulation.configurations.TransitoryBaseConfigurations;
 import it.simulation.configurations.ValidationBaseConfigurations;
 import it.simulation.configurations.VerificationBaseConfiguration;
@@ -12,9 +13,6 @@ public class ExperimentsFactory {
         switch (EXPERIMENT) {
             case "base" -> {
                 return new BaseExperiment(rngs);
-            }
-            case "base-exp-1" -> {
-                return new BaseExp1(rngs);
             }
             case "ver-base" -> {
                 VerificationBaseConfiguration.setVerificationBaseConfiguration();
@@ -39,6 +37,10 @@ public class ExperimentsFactory {
             case "trans-b-3" -> {
                 TransitoryBaseConfigurations.setTransitoryBaseConfiguration(160);
                 return new TransitoryBaseExperiments(rngs);
+            }
+            case "base-exp-1" -> {
+                BaseExperimentsConfigurations.setBaseExperimentFirstConfiguration();
+                return new BaseExp1(rngs);
             }
         };
 
