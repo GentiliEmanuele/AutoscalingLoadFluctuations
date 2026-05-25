@@ -1,7 +1,7 @@
 package it.simulation.configurations;
 
 public class BaseExperimentsConfigurations extends Config {
-    public static void setBaseExperimentFirstConfiguration() {
+    public static void setBaseExperimentsConfiguration() {
         SEED = 42;
         ARRIVALS_MU = 0.15;
         ARRIVALS_CV = 4;
@@ -20,7 +20,7 @@ public class BaseExperimentsConfigurations extends Config {
         ARRIVALS_TOTAL_PERIOD = 0; // It's a don't care because long term fluctuations are not active
         ARRIVALS_FAST_INTERVAL = 0; // It's a don't care because long term fluctuations are not active
         ARRIVALS_FAST_MU = 0; // It's a don't care because long term fluctuations are not active
-        REPETITION_NUMBER = 32;
+        REPETITION_NUMBER = 16;
         CONFIDENCE_LEVEL = 0.95;
         OUTPUT_DIR = "output";
         BATCH_SIZE = 1; // It's a don't care because batch method is not used
@@ -30,5 +30,9 @@ public class BaseExperimentsConfigurations extends Config {
         SCALING_INDICATOR_TYPE = "r0"; // It's a don't care because scaling mechanism is not active
         SCALING_OUT_THRESHOLD = INFINITY;
         SLIDING_WINDOW_SIZE = 1; // It's a don't care because scaling mechanism is not active
+    }
+
+    public static void setBaseExperimentSecondConfiguration() {
+
     }
 }

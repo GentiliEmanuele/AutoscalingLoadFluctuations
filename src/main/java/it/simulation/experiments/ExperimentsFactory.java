@@ -39,8 +39,12 @@ public class ExperimentsFactory {
                 return new TransitoryBaseExperiments(rngs);
             }
             case "base-exp-1" -> {
-                BaseExperimentsConfigurations.setBaseExperimentFirstConfiguration();
+                BaseExperimentsConfigurations.setBaseExperimentsConfiguration();
                 return new BaseExp1(rngs);
+            }
+            case "base-exp-2" -> {
+                BaseExperimentsConfigurations.setBaseExperimentsConfiguration();
+                return new BaseExp2(rngs);
             }
         };
 
