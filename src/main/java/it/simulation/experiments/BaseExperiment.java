@@ -70,6 +70,15 @@ public class BaseExperiment implements Experiment {
         /* Set up the system state */
         SystemState s = new SystemState(calendar, servicesVA, arrivalVA, turnOnVa);
 
+        /* Fluctuation values computation (used only if needed) */
+        double slowPercentage = (ARRIVALS_TOTAL_PERIOD - ARRIVALS_FAST_INTERVAL) / ARRIVALS_TOTAL_PERIOD;
+        double fastPercentage = ARRIVALS_FAST_INTERVAL / ARRIVALS_TOTAL_PERIOD;
+
+        double meanLambda = 1 / ARRIVALS_MU;
+        double fastLambda = 1 / ARRIVALS_FAST_MU;
+        double slowLambda = (meanLambda - fastLambda * fastPercentage) / slowPercentage;
+        double slowMu = 1 / slowLambda;
+
         while (Experiment.continueSimulating(s)) {
             /* Compute the next event */
             Event nextEvent = calendar.nextEvent();
@@ -79,6 +88,18 @@ public class BaseExperiment implements Experiment {
 
             /* Send current data to collector */
             collector.collect(s.getCurrent(), s.getInfrastructure());
+
+            /* Simulate long-term fluctuation */
+            boolean hasLongTermFluctuations = ARRIVALS_FAST_INTERVAL != 0;
+            if (hasLongTermFluctuations) {
+                if (nextEvent.getTimestamp() % ARRIVALS_TOTAL_PERIOD < slowPercentage * ARRIVALS_TOTAL_PERIOD) {
+                    // Slow arrivals
+                    s.getArrivalVA().setMean(slowMu);
+                } else {
+                    // Fast arrivals
+                    s.getArrivalVA().setMean(ARRIVALS_FAST_MU);
+                }
+            }
 
             /* Process the next-event */
             nextEvent.process(s, visitor);
