@@ -31,8 +31,4 @@ public class BaseExperimentsConfigurations extends Config {
         SCALING_OUT_THRESHOLD = INFINITY;
         SLIDING_WINDOW_SIZE = 1; // It's a don't care because scaling mechanism is not active
     }
-
-    public static void setBaseExperimentSecondConfiguration() {
-
-    }
 }

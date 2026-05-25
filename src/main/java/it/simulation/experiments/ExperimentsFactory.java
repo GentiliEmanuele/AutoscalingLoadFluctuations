@@ -1,9 +1,6 @@
 package it.simulation.experiments;
 
-import it.simulation.configurations.BaseExperimentsConfigurations;
-import it.simulation.configurations.TransitoryBaseConfigurations;
-import it.simulation.configurations.ValidationBaseConfigurations;
-import it.simulation.configurations.VerificationBaseConfiguration;
+import it.simulation.configurations.*;
 import it.simulation.lib.Rngs;
 
 import static it.simulation.configurations.Config.EXPERIMENT;
@@ -45,6 +42,10 @@ public class ExperimentsFactory {
             case "base-exp-2" -> {
                 BaseExperimentsConfigurations.setBaseExperimentsConfiguration();
                 return new BaseExp2(rngs);
+            }
+            case "val-adv-1" -> {
+                ValidationAdvancedConfiguration.setValidationAdvancedConfiguration();
+                return new BaseExperiment(rngs);
             }
         };
 

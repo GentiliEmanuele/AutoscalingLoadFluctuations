@@ -1,10 +1,12 @@
 package it.simulation.data.collectors;
 
 import it.simulation.data.analyzers.Analyzer;
+import it.simulation.data.boundary.NumServerByTimestampCSV;
 import it.simulation.data.boundary.ServersJobsNumberByTimestamp;
 import it.simulation.data.boundary.SystemStatsCSV;
 import it.simulation.system.SystemStats;
 import it.simulation.system.infrastructures.Infrastructure;
+import it.simulation.system.servers.ServerState;
 import it.simulation.system.servers.ServerStats;
 
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import static it.simulation.configurations.Config.*;
 public class BatchMeanCollector implements Collector {
     private final Map<Double, SystemStats> statsByTimestamp;
     private final Map<Double, List<ServerStats>> serversStatsByTimestamp;
+    private final Map<Double, Integer> numServersByTimestamp;
     private final Map<Integer, Map<Double, Integer>> serversJobsNumberByTimestamp;
     private final Analyzer analyzer;
 
@@ -30,6 +33,7 @@ public class BatchMeanCollector implements Collector {
         this.analyzer = analyzer;
         this.baselineCompletion = 0;
         this.serversJobsNumberByTimestamp = new TreeMap<>();
+        this.numServersByTimestamp = new TreeMap<>();
     }
 
     @Override
@@ -52,6 +56,9 @@ public class BatchMeanCollector implements Collector {
             analyzeAndPush(0);
             this.baselineCompletion = currentCompletion;
         }
+
+        // Save the number of server at the current timestamp
+        numServersByTimestamp.put(timestamp, infrastructure.getNumWebServersByState(ServerState.ACTIVE));
     }
 
     @Override
@@ -61,6 +68,7 @@ public class BatchMeanCollector implements Collector {
         if (LOG_FINE) {
             SystemStatsCSV.systemStatsToCSV(runId, statsByTimestamp);
             ServersJobsNumberByTimestamp.serversJobsNumberByTimestampCSV(serversJobsNumberByTimestamp);
+            NumServerByTimestampCSV.numServerByTimestampCSV(runId, numServersByTimestamp);
         }
         statsByTimestamp.clear();
         serversStatsByTimestamp.clear();

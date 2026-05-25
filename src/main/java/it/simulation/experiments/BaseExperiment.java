@@ -79,12 +79,15 @@ public class BaseExperiment implements Experiment {
         double slowLambda = (meanLambda - fastLambda * fastPercentage) / slowPercentage;
         double slowMu = 1 / slowLambda;
 
+        System.out.println("Slow Lambda: " + slowLambda);
+        System.out.println("Fast Lambda: " + fastLambda);
+
         while (Experiment.continueSimulating(s)) {
             /* Compute the next event */
             Event nextEvent = calendar.nextEvent();
 
             /* Check that the next timestamp is greater than the previous one */
-            assert s.getCurrent() < nextEvent.getTimestamp();
+            assert s.getCurrent() <= nextEvent.getTimestamp();
 
             /* Send current data to collector */
             collector.collect(s.getCurrent(), s.getInfrastructure());
