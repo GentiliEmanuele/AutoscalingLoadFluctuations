@@ -121,7 +121,7 @@ public class BatchMeanAnalyzer implements Analyzer {
         double startTotalResponseTime = start.getCurrMeanResponseTime() * start.getCompletedJobs();
         double endTotalResponseTime = end.getCurrMeanResponseTime() * end.getCompletedJobs();
         double deltaResponseTime = endTotalResponseTime - startTotalResponseTime;
-        double meanResponseTime = deltaResponseTime / deltaC;
+        double meanResponseTime = deltaC != 0 ? deltaResponseTime / deltaC : 0.0;
 
         ServerStats currentServerStats = new ServerStats(start.getServerIndex(), deltaN, deltaB, deltaC, deltaA, meanResponseTime, outFreq);
         serverBatchMeans.computeIfAbsent(start.getServerIndex(), _ -> new ArrayList<>()).add(currentServerStats);

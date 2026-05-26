@@ -44,7 +44,11 @@ public class ExperimentsFactory {
                 return new BaseExp2(rngs);
             }
             case "val-adv-1" -> {
-                ValidationAdvancedConfiguration.setValidationAdvancedConfiguration();
+                ValidationAdvancedConfiguration.setValidationAdvancedConfiguration("r0", 3);
+                return new BaseExperiment(rngs);
+            }
+            case "val-adv-2" -> {
+                ValidationAdvancedConfiguration.setValidationAdvancedConfiguration("jobs", 20);
                 return new BaseExperiment(rngs);
             }
         };

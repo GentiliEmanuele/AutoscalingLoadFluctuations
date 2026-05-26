@@ -79,9 +79,6 @@ public class BaseExperiment implements Experiment {
         double slowLambda = (meanLambda - fastLambda * fastPercentage) / slowPercentage;
         double slowMu = 1 / slowLambda;
 
-        System.out.println("Slow Lambda: " + slowLambda);
-        System.out.println("Fast Lambda: " + fastLambda);
-
         while (Experiment.continueSimulating(s)) {
             /* Compute the next event */
             Event nextEvent = calendar.nextEvent();
