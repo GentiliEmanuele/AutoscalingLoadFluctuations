@@ -51,6 +51,14 @@ public class ExperimentsFactory {
                 ValidationAdvancedConfiguration.setValidationAdvancedConfiguration("jobs", 20);
                 return new BaseExperiment(rngs);
             }
+            case "trans-adv-1" -> {
+                TransitoryAdvancedConfigurations.setTransitoryAdvancedConfiguration("r0", 3);
+                return new BaseExperiment(rngs);
+            }
+            case "trans-adv-2" -> {
+                TransitoryAdvancedConfigurations.setTransitoryAdvancedConfiguration("jobs", 20);
+                return new BaseExperiment(rngs);
+            }
         };
 
         throw new IllegalArgumentException("Unsupported experiment: " + EXPERIMENT);
