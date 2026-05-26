@@ -17,7 +17,7 @@ public class ExperimentsFactory {
             }
             case "val-base-1" -> {
                 ValidationBaseConfigurations.setValidationBaseConfigurationFirst();
-                return new ValidationBaseExperimentFirst(rngs);
+                return new BaseExperiment(rngs);
             }
             case "val-base-2" -> {
                 ValidationBaseConfigurations.setValidationBaseConfigurationSecond();
@@ -25,15 +25,15 @@ public class ExperimentsFactory {
             }
             case "trans-b-1" -> {
                 TransitoryBaseConfigurations.setTransitoryBaseConfiguration(10);
-                return new TransitoryBaseExperiments(rngs);
+                return new BaseExperiment(rngs);
             }
             case "trans-b-2" -> {
                 TransitoryBaseConfigurations.setTransitoryBaseConfiguration(80);
-                return new TransitoryBaseExperiments(rngs);
+                return new BaseExperiment(rngs);
             }
             case "trans-b-3" -> {
                 TransitoryBaseConfigurations.setTransitoryBaseConfiguration(160);
-                return new TransitoryBaseExperiments(rngs);
+                return new BaseExperiment(rngs);
             }
             case "base-exp-1" -> {
                 BaseExperimentsConfigurations.setBaseExperimentsConfiguration();
