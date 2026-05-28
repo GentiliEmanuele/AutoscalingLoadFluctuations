@@ -80,6 +80,8 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
 
         System.out.println("\n\nSystem: ");
         System.out.println("   total throughput ..... =     " + systemStats.getThroughput());
+        System.out.println("   total arrived job .... =     " + systemStats.getTotalArrivals());
+        System.out.println("   total completed job .. =     " + systemStats.getTotalCompletion());
         System.out.println("   average busy server .. =     " + systemStats.getMeanBusyServer());
         System.out.println("   average service time . =     " + systemStats.getMeanServiceTime());
         System.out.println("   average response time  =     " + systemStats.getMeanResponseTime());
@@ -96,8 +98,9 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
         double totalThroughput = currentTs > 0 ? totalCompletion / currentTs : 0;
         double meanServiceTime = totalCompletion > 0 ? totalBusyTime / totalCompletion : 0;
         double systemResponseTime = getSystemResponseTime(currentTs, totalThroughput);
+        int totalArrivals = getBaseTotalArrivals() + spikeServer.getServerStats().getArrivedJobs();
 
-        return new SystemStats(totalThroughput, meanBusyServers, meanServiceTime, systemResponseTime, totalCompletion, totalBusyTime);
+        return new SystemStats(totalThroughput, meanBusyServers, meanServiceTime, systemResponseTime, totalCompletion, totalBusyTime, totalArrivals);
     }
 
     @Override
@@ -119,6 +122,15 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
                 spikeServerOutputFrequency / totalThroughput * spikeServer.getServerStats().getCurrMeanResponseTime() :
                 0;
         return systemResponseTime;
+    }
+
+    private int getBaseTotalArrivals() {
+        int totalArrival = 0;
+        for (AbstractServer webServer : base.webServers) {
+            totalArrival += webServer.getStats().getArrivedJobs();
+        }
+
+        return totalArrival;
     }
 
     @Override

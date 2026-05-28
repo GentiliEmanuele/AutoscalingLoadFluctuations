@@ -38,6 +38,7 @@ public class ReplicationAnalyzer implements Analyzer {
         // Compute delta for completion and busy time
         int deltaC = end.getTotalCompletion() - start.getTotalCompletion();
         double deltaB = end.getTotalBusyTime() - start.getTotalBusyTime();
+        int deltaA = end.getTotalArrivals() - start.getTotalArrivals();
 
         // Compute mean metrics in this run
         double meanBusyServers = deltaB / deltaT;
@@ -56,7 +57,8 @@ public class ReplicationAnalyzer implements Analyzer {
                 meanServiceTime,
                 meanResponseTime,
                 deltaC,
-                deltaB
+                deltaB,
+                deltaA
         );
 
         systemRunMeans.add(currBatchSystemStats);

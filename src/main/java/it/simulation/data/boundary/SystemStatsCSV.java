@@ -17,7 +17,9 @@ public class SystemStatsCSV {
             "Throughput",
             "BusyServer",
             "ServiceTime",
-            "ResponseTime"
+            "ResponseTime",
+            "Completion",
+            "Arrivals"
     };
 
     private static boolean isFirstWrite = true;
@@ -53,7 +55,9 @@ public class SystemStatsCSV {
                 String.valueOf(systemStats.getThroughput()),
                 String.valueOf(systemStats.getMeanBusyServer()),
                 String.valueOf(systemStats.getMeanServiceTime()),
-                String.valueOf(systemStats.getMeanResponseTime())
+                String.valueOf(systemStats.getMeanResponseTime()),
+                String.valueOf(systemStats.getTotalCompletion()),
+                String.valueOf(systemStats.getTotalArrivals())
         };
     }
 }

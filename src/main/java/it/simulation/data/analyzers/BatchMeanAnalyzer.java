@@ -39,6 +39,7 @@ public class BatchMeanAnalyzer implements Analyzer {
         // Compute delta for completion and busy time
         int deltaC = end.getTotalCompletion() - start.getTotalCompletion();
         double deltaB = end.getTotalBusyTime() - start.getTotalBusyTime();
+        int deltaA = end.getTotalArrivals() - start.getTotalArrivals();
 
         // Compute mean metrics in this batch
         double meanBusyServers = deltaB / deltaT;
@@ -57,7 +58,8 @@ public class BatchMeanAnalyzer implements Analyzer {
                 meanServiceTime,
                 meanResponseTime,
                 deltaC,
-                deltaB
+                deltaB,
+                deltaA
         );
         systemBatchMeans.add(currBatchSystemStats);
     }

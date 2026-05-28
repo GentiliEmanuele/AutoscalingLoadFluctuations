@@ -72,9 +72,11 @@ public interface Analyzer {
 
         if (rho > rhoLimit) System.out.printf("Autocorrelation is more than %.6f\n", rhoLimit);
 
+        /*
         System.out.printf("[%s] Mean: %.6f | Variance: %.6f | Autocorrelation: %.6f\n",
                 label, mean, var, rho);
         System.out.printf("CI 95%%: [%.6f, %.6f] (± %.6f)\n", mean - halfWidth, mean + halfWidth, halfWidth);
+         */
 
         return Map.entry(label, String.format("%.6f +/- %.6f", mean, halfWidth));
     }

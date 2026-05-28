@@ -98,10 +98,12 @@ public class BaseServerInfrastructure implements Infrastructure {
     @Override
     public SystemStats computeSystemStats(double currentTs) {
         int totalCompletion = 0;
+        int totalArrivals = 0;
         double totalBusyTime = 0.0;
 
         for (AbstractServer server : webServers) {
             totalCompletion += server.getServerStats().getCompletedJobs();
+            totalArrivals += server.getServerStats().getArrivedJobs();
             totalBusyTime += server.getServerStats().getServiceSum();
             server.getServerStats().setCurrOutputFrequency(currentTs > 0 ? (double) server.getServerStats().getCompletedJobs() / currentTs : 0);
         }
@@ -117,7 +119,7 @@ public class BaseServerInfrastructure implements Infrastructure {
                     0;
         }
 
-        return new SystemStats(webServersThroughput, busyWebServers, webServersServiceTime, webServersResponseTime, totalCompletion, totalBusyTime);
+        return new SystemStats(webServersThroughput, busyWebServers, webServersServiceTime, webServersResponseTime, totalCompletion, totalBusyTime, totalArrivals);
     }
 
     @Override
