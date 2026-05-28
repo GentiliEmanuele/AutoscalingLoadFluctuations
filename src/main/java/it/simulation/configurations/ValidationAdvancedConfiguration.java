@@ -29,6 +29,6 @@ public class ValidationAdvancedConfiguration extends Config {
         TURN_ON_STD = 0.5;
         SCALING_INDICATOR_TYPE = indicatorType;
         SCALING_OUT_THRESHOLD = autoScalingThr;
-        SLIDING_WINDOW_SIZE = 200;
+        SLIDING_WINDOW_SIZE = 50;
     }
 }
