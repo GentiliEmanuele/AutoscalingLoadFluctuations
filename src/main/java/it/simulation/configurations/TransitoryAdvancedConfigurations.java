@@ -15,12 +15,12 @@ public class TransitoryAdvancedConfigurations extends Config {
         START_NUM_SERVERS = 1;
         SCHEDULER_TYPE = "leastUsed";
         SPIKE_CAPACITY = 1;
-        SI_MAX = 90;
+        SI_MAX = 3;
         SPIKESERVER_ACTIVE = true;
         ARRIVALS_TOTAL_PERIOD = 500;
         ARRIVALS_FAST_INTERVAL = 100;
         ARRIVALS_FAST_MU = 0.15 / 2; // fast lambda = 8 req/sec
-        REPETITION_NUMBER = 32;
+        REPETITION_NUMBER = 5;
         CONFIDENCE_LEVEL = 0.95;
         OUTPUT_DIR = "output";
         BATCH_SIZE = 16384; // It's a don't care because batch mean mechanism is not used
@@ -29,7 +29,7 @@ public class TransitoryAdvancedConfigurations extends Config {
         TURN_ON_STD = 0.5;
         SCALING_INDICATOR_TYPE = indicatorType;
         SCALING_OUT_THRESHOLD = autoScalingThr;
-        SLIDING_WINDOW_SIZE = 100;
+        SLIDING_WINDOW_SIZE = 50;
         STOP = 50000;
     }
 }

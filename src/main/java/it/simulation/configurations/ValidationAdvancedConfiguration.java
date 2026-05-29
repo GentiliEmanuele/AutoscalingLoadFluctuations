@@ -15,7 +15,7 @@ public class ValidationAdvancedConfiguration extends Config {
         START_NUM_SERVERS = 1;
         SCHEDULER_TYPE = "leastUsed";
         SPIKE_CAPACITY = 1;
-        SI_MAX = 90;
+        SI_MAX = 3;
         SPIKESERVER_ACTIVE = true;
         ARRIVALS_TOTAL_PERIOD = 500;
         ARRIVALS_FAST_INTERVAL = 100;

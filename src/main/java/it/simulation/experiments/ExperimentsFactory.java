@@ -52,7 +52,7 @@ public class ExperimentsFactory {
                 return new BaseExperiment(rngs);
             }
             case "trans-adv-1" -> {
-                TransitoryAdvancedConfigurations.setTransitoryAdvancedConfiguration("r0", 0.75);
+                TransitoryAdvancedConfigurations.setTransitoryAdvancedConfiguration("r0", 3);
                 return new BaseExperiment(rngs);
             }
             case "trans-adv-2" -> {
