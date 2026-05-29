@@ -158,9 +158,13 @@ public class EventProcessor implements EventVisitor{
                 scalingOutCondition = scalingIndicator > SCALING_OUT_THRESHOLD * 1.5;
                 scalingInCondition = scalingIndicator < SCALING_OUT_THRESHOLD * 0.5;
             } else if (SCALING_INDICATOR_TYPE.equals("jobs")) {
-                int expectedServers = (int) (Math.ceil(scalingIndicator / SCALING_OUT_THRESHOLD));
-                scalingOutCondition = activatedServer < expectedServers;
-                scalingInCondition = activatedServer > expectedServers;
+                double scalingInThr = SCALING_OUT_THRESHOLD * 0.6;
+
+                int requiredServerForScaleOut = (int) (Math.ceil(scalingIndicator / SCALING_OUT_THRESHOLD));
+                int requiredServerForScaleIn = (int) (Math.ceil(scalingIndicator / scalingInThr));
+
+                scalingOutCondition = activatedServer < requiredServerForScaleOut;
+                scalingInCondition = activatedServer > requiredServerForScaleIn;
             } else {
                 throw new IllegalArgumentException("Invalid SCALING_INDICATOR_TYPE");
             }

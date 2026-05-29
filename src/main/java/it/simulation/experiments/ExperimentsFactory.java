@@ -48,7 +48,7 @@ public class ExperimentsFactory {
                 return new BaseExperiment(rngs);
             }
             case "val-adv-2" -> {
-                ValidationAdvancedConfiguration.setValidationAdvancedConfiguration("jobs", 20);
+                ValidationAdvancedConfiguration.setValidationAdvancedConfiguration("jobs", 40);
                 return new BaseExperiment(rngs);
             }
             case "trans-adv-1" -> {
@@ -56,7 +56,7 @@ public class ExperimentsFactory {
                 return new BaseExperiment(rngs);
             }
             case "trans-adv-2" -> {
-                TransitoryAdvancedConfigurations.setTransitoryAdvancedConfiguration("jobs", 5);
+                TransitoryAdvancedConfigurations.setTransitoryAdvancedConfiguration("jobs", 40);
                 return new BaseExperiment(rngs);
             }
         };
