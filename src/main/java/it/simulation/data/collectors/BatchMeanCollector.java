@@ -18,7 +18,6 @@ import static it.simulation.configurations.Config.*;
 
 public class BatchMeanCollector implements Collector {
     private final Map<Double, SystemStats> statsByTimestamp;
-    private final Map<Double, List<ServerStats>> serversStatsByTimestamp;
     private final Map<Double, Integer> numServersByTimestamp;
     private final Map<Integer, Map<Double, Integer>> serversJobsNumberByTimestamp;
     private final Analyzer analyzer;
@@ -29,7 +28,6 @@ public class BatchMeanCollector implements Collector {
 
     public BatchMeanCollector(Analyzer analyzer) {
         this.statsByTimestamp = new TreeMap<>();
-        this.serversStatsByTimestamp = new TreeMap<>();
         this.analyzer = analyzer;
         this.baselineCompletion = 0;
         this.serversJobsNumberByTimestamp = new TreeMap<>();
@@ -43,7 +41,6 @@ public class BatchMeanCollector implements Collector {
         List<ServerStats> serverStats = infrastructure.getServersStats(timestamp);
 
         statsByTimestamp.put(timestamp, systemStats);
-        this.serversStatsByTimestamp.computeIfAbsent(timestamp, _ -> new ArrayList<>(serverStats));
 
         // The completions in this batch  are equals to the current completions minus the completions when the batch was opened
         int currentCompletion = systemStats.getTotalCompletion();
@@ -64,14 +61,12 @@ public class BatchMeanCollector implements Collector {
     @Override
     public void analyzeAndPush(int runId) {
         analyzer.analyzeSystemPartially(statsByTimestamp);
-        analyzer.analyzeServersPartially(serversStatsByTimestamp);
         if (LOG_FINE) {
             SystemStatsCSV.systemStatsToCSV(runId, statsByTimestamp);
             ServersJobsNumberByTimestamp.serversJobsNumberByTimestampCSV(serversJobsNumberByTimestamp);
             NumServerByTimestampCSV.numServerByTimestampCSV(runId, numServersByTimestamp);
         }
         statsByTimestamp.clear();
-        serversStatsByTimestamp.clear();
         serversJobsNumberByTimestamp.clear();
     }
 }

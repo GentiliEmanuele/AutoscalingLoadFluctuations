@@ -17,7 +17,6 @@ public class BatchMeanAnalyzer implements Analyzer {
     private final Map<Integer, List<ServerStats>> serverBatchMeans;
     private final Map<Integer, Map<String, String>> serversConfidenceIntervals;
 
-
     public BatchMeanAnalyzer() {
         systemBatchMeans = new ArrayList<>();
         confidenceIntervals = new TreeMap<>();
@@ -66,18 +65,7 @@ public class BatchMeanAnalyzer implements Analyzer {
 
     @Override
     public void analyzeServersPartially(Map<Double, List<ServerStats>> stats) {
-        TreeMap<Double, List<ServerStats>> statsByTimestamp = (TreeMap<Double, List<ServerStats>>) stats;
-
-        // Get first and last run state
-        List<ServerStats> start = statsByTimestamp.firstEntry().getValue();
-        List<ServerStats> end = statsByTimestamp.lastEntry().getValue();
-
-        // Compute run duration
-        double deltaT = statsByTimestamp.lastEntry().getKey() - statsByTimestamp.firstEntry().getKey();
-
-        for (int i = 0; i < end.size(); i++) {
-            analyzeServerPartially(start.get(i), end.get(i), deltaT);
-        }
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -110,23 +98,6 @@ public class BatchMeanAnalyzer implements Analyzer {
     private void computeCIAndPut(String label, ToDoubleFunction<SystemStats> extractor) {
         Map.Entry<String, String> ci = computeConfidenceInterval(systemBatchMeans, label, extractor);
         confidenceIntervals.put(ci.getKey(), ci.getValue());
-    }
-
-    private void analyzeServerPartially(ServerStats start, ServerStats end, double deltaT) {
-        double deltaN = end.getNodeSum() - start.getNodeSum();
-        int deltaC = end.getCompletedJobs() - start.getCompletedJobs();
-        int deltaA = end.getArrivedJobs() - start.getArrivedJobs();
-        double deltaB = end.getServiceSum() - start.getServiceSum();
-
-        double outFreq = deltaC / deltaT;
-
-        double startTotalResponseTime = start.getCurrMeanResponseTime() * start.getCompletedJobs();
-        double endTotalResponseTime = end.getCurrMeanResponseTime() * end.getCompletedJobs();
-        double deltaResponseTime = endTotalResponseTime - startTotalResponseTime;
-        double meanResponseTime = deltaC != 0 ? deltaResponseTime / deltaC : 0.0;
-
-        ServerStats currentServerStats = new ServerStats(start.getServerIndex(), deltaN, deltaB, deltaC, deltaA, meanResponseTime, outFreq);
-        serverBatchMeans.computeIfAbsent(start.getServerIndex(), _ -> new ArrayList<>()).add(currentServerStats);
     }
 
     private void computeServerCIAndPut(int index, String label, List<ServerStats> serverStats, ToDoubleFunction<ServerStats> extractor) {
