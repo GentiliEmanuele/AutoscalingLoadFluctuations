@@ -41,6 +41,7 @@ public class Config {
     public static String SCALING_INDICATOR_TYPE;
     public static double SCALING_OUT_THRESHOLD;
     public static int SLIDING_WINDOW_SIZE;
+    public static double START;
 
     static {
         readConfiguration();
@@ -54,6 +55,7 @@ public class Config {
             props.load(in);
 
             INFINITY = Double.POSITIVE_INFINITY;
+            START = Double.parseDouble(props.getProperty("system.start"));
             STOP = (Objects.equals(props.getProperty("system.stop"), "INFINITY")) ?
                     Double.POSITIVE_INFINITY : Double.parseDouble(props.getProperty("system.stop"));
             SEED = Integer.parseInt(props.getProperty("random.seed"));

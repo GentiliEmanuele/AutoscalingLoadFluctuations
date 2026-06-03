@@ -3,6 +3,8 @@ package it.simulation.system.servers;
 import lombok.Getter;
 import lombok.Setter;
 
+import static it.simulation.configurations.Config.START;
+
 @Getter
 public class ServerStats {
     private final int serverIndex; /* server index */
@@ -45,6 +47,8 @@ public class ServerStats {
 
         assert startTs >= 0 && endTs >= startTs && jobNum >= 0;
 
+        if (endTs < START) return;
+
         if(jobNum > 0) {
             this.nodeSum    += (endTs - startTs) * jobNum;
             this.serviceSum += (endTs - startTs);
@@ -58,7 +62,8 @@ public class ServerStats {
         }
     }
 
-    public void incrementArrivedJobs() {
+    public void incrementArrivedJobs(double arrivalTime) {
+        if (arrivalTime < START) return;
         this.arrivedJobs++;
     }
 

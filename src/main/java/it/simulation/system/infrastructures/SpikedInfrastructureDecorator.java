@@ -89,15 +89,18 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
 
     @Override
     public SystemStats computeSystemStats(double currentTs) {
+        if (currentTs < START) return new SystemStats(0, 0, 0, 0, 0, 0, 0);
+
         // This return web servers metrics
         SystemStats baseSystemStats = base.computeSystemStats(currentTs);
 
         int totalCompletion = baseSystemStats.getTotalCompletion() + spikeServer.getServerStats().getCompletedJobs();
         double totalBusyTime = baseSystemStats.getTotalBusyTime() + spikeServer.getServerStats().getServiceSum();
-        double meanBusyServers = currentTs > 0 ? totalBusyTime / currentTs : 0;
-        double totalThroughput = currentTs > 0 ? totalCompletion / currentTs : 0;
+        double deltaT = currentTs - START;
+        double meanBusyServers = deltaT > 0 ? totalBusyTime / deltaT : 0;
+        double totalThroughput = deltaT > 0 ? totalCompletion / deltaT : 0;
         double meanServiceTime = totalCompletion > 0 ? totalBusyTime / totalCompletion : 0;
-        double systemResponseTime = getSystemResponseTime(currentTs, totalThroughput);
+        double systemResponseTime = getSystemResponseTime(deltaT, totalThroughput);
         int totalArrivals = getBaseTotalArrivals() + spikeServer.getServerStats().getArrivedJobs();
 
         return new SystemStats(totalThroughput, meanBusyServers, meanServiceTime, systemResponseTime, totalCompletion, totalBusyTime, totalArrivals);
@@ -140,7 +143,7 @@ public class SpikedInfrastructureDecorator implements Infrastructure {
             base.assignJob(job);
         } else {
             spikeServer.addJob(job);
-            spikeServer.getServerStats().incrementArrivedJobs();
+            spikeServer.getServerStats().incrementArrivedJobs(job.getArrivalTime());
         }
     }
 

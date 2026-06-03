@@ -10,6 +10,7 @@ import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 
 import static it.simulation.configurations.Config.CONFIDENCE_LEVEL;
+import static it.simulation.configurations.Config.REPETITION_NUMBER;
 
 public interface Analyzer {
     void analyzeSystemPartially(Map<Double, SystemStats> stats);
@@ -20,6 +21,7 @@ public interface Analyzer {
 
     static double computeMean(List<Double> means) {
         if (means.isEmpty()) return 0.0;
+        // System.out.println(means.stream().mapToDouble(Double::doubleValue).filter(Double::isNaN).count());
         return means.stream().mapToDouble(Double::doubleValue).sum() / means.size();
     }
 
@@ -47,6 +49,17 @@ public interface Analyzer {
     }
 
     default <T> List<Double> extractMetric(List<T> stats, ToDoubleFunction<T> extractor) {
+        assert stats.stream()
+                .mapToDouble(extractor)
+                .filter(Double::isInfinite).findAny().isEmpty() :
+                "Infinite value found";
+
+        assert stats.stream()
+                .mapToDouble(extractor)
+                .filter(Double::isNaN).findAny().isEmpty() :
+                "NaN value found";
+
+
         return stats.stream()
                 .mapToDouble(extractor)
                 .boxed()
@@ -70,13 +83,8 @@ public interface Analyzer {
         double rhoLimit = 2 / Math.sqrt(inputStats.size());
         double halfWidth = Analyzer.computeHalfWidth(values.size(), var);
 
-        if (rho > rhoLimit) System.out.printf("Autocorrelation is more than %.6f\n", rhoLimit);
-
-        /*
-        System.out.printf("[%s] Mean: %.6f | Variance: %.6f | Autocorrelation: %.6f\n",
-                label, mean, var, rho);
-        System.out.printf("CI 95%%: [%.6f, %.6f] (± %.6f)\n", mean - halfWidth, mean + halfWidth, halfWidth);
-         */
+        // Check autocorrelation only for batch mean method
+        if (REPETITION_NUMBER == 1) assert rho <= rhoLimit : String.format("Autocorrelation is more than %.6f for %s\n", rhoLimit, label);
 
         return Map.entry(label, String.format("%.6f +/- %.6f", mean, halfWidth));
     }

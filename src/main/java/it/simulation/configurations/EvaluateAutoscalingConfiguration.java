@@ -20,7 +20,8 @@ public class EvaluateAutoscalingConfiguration extends Config {
         ARRIVALS_TOTAL_PERIOD = 500;
         ARRIVALS_FAST_INTERVAL = 100;
         ARRIVALS_FAST_MU = 0.15 / 2; // fast lambda is the double of mean lambda
-        REPETITION_NUMBER = 32;
+        REPETITION_NUMBER = 64;
+        START = 25000;
         STOP = 25500;
         CONFIDENCE_LEVEL = 0.95;
         OUTPUT_DIR = "output";

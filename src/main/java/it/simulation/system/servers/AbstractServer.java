@@ -11,8 +11,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Locale;
 
-import static it.simulation.configurations.Config.SLIDING_WINDOW_SIZE;
-import static it.simulation.configurations.Config.STOP;
+import static it.simulation.configurations.Config.*;
 
 public abstract class AbstractServer implements Server {
     @Getter @Setter private ServerState serverState;
@@ -86,15 +85,16 @@ public abstract class AbstractServer implements Server {
 
     @Override
     public void printServerStats(double currentTs) {
+        double deltaT = currentTs - START;
         System.out.println("for " + stats.getCompletedJobs() + " jobs");
         // STOP instead of currentTs, because the arrival process ends at STOP and the simulation ends when all the servers are empty
-        System.out.println("   average interarrival time =   " + format.format(STOP / stats.getCompletedJobs()));
-        System.out.println("   average response time ... =   " + format.format(stats.getNodeSum() / stats.getCompletedJobs()));
-        System.out.println("   average service time .... =   " + format.format(stats.getServiceSum() / stats.getCompletedJobs()));
-        System.out.println("   average # in the node ... =   " + format.format(stats.getNodeSum() / currentTs));
+        System.out.println("   average interarrival time =   " + format.format((STOP - START) / stats.getCompletedJobs()));
+        System.out.println("   average response time ... =   " + format.format(stats.getCompletedJobs() != 0 ? stats.getNodeSum() / stats.getCompletedJobs() : 0));
+        System.out.println("   average service time .... =   " + format.format(stats.getCompletedJobs() != 0 ? stats.getServiceSum() / stats.getCompletedJobs() : 0));
+        System.out.println("   average # in the node ... =   " + format.format(stats.getNodeSum() / deltaT));
         System.out.println("   received jobs ........... =   " + stats.getArrivedJobs());
-        System.out.println("   utilization ............. =   " + format.format(stats.getServiceSum() / currentTs));
-        System.out.println("   throughput  ............. =   " + format.format(stats.getCompletedJobs() / currentTs));
+        System.out.println("   utilization ............. =   " + format.format(stats.getServiceSum() / deltaT));
+        System.out.println("   throughput  ............. =   " + format.format(stats.getCompletedJobs() / deltaT));
     }
 
     @Override

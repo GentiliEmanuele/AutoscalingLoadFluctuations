@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static it.simulation.configurations.Config.LOG_FINE;
+import static it.simulation.configurations.Config.START;
 
 public class ReplicationCollector implements Collector {
 
@@ -27,6 +28,8 @@ public class ReplicationCollector implements Collector {
 
     @Override
     public void collect(double timestamp, Infrastructure infrastructure) {
+        if (timestamp < START) return;
+
         // Compute system and servers stats
         SystemStats systemStats = infrastructure.computeSystemStats(timestamp);
         List<ServerStats> serverStats = infrastructure.getServersStats(timestamp);

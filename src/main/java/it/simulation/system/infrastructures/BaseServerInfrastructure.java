@@ -97,6 +97,8 @@ public class BaseServerInfrastructure implements Infrastructure {
 
     @Override
     public SystemStats computeSystemStats(double currentTs) {
+        if (currentTs < 25000) return new SystemStats(0, 0, 0, 0, 0, 0, 0);
+
         int totalCompletion = 0;
         int totalArrivals = 0;
         double totalBusyTime = 0.0;
@@ -131,7 +133,7 @@ public class BaseServerInfrastructure implements Infrastructure {
     public void assignJob(Job job) {
         List<AbstractServer> baseList = new ArrayList<>(this.webServers);
         AbstractServer target = scheduler.select(baseList);
-        target.getStats().incrementArrivedJobs();
+        target.getStats().incrementArrivedJobs(job.getArrivalTime());
         target.addJob(job);
     }
 
