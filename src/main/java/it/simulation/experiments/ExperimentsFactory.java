@@ -59,6 +59,10 @@ public class ExperimentsFactory {
                 TransitoryAdvancedConfigurations.setTransitoryAdvancedConfiguration("jobs", 40);
                 return new BaseExperiment(rngs);
             }
+            case "adv-exp-1" -> {
+                EvaluateAutoscalingConfiguration.setEvaluateAutoScalingConfig("r0");
+                return new AdvExp1(rngs);
+            }
         };
 
         throw new IllegalArgumentException("Unsupported experiment: " + EXPERIMENT);
