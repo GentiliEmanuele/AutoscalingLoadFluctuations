@@ -108,6 +108,7 @@ public class BaseServerInfrastructure implements Infrastructure {
             totalArrivals += server.getServerStats().getArrivedJobs();
             totalBusyTime += server.getServerStats().getServiceSum();
             server.getServerStats().setCurrOutputFrequency(currentTs > 0 ? (double) server.getServerStats().getCompletedJobs() / currentTs : 0);
+            server.getServerStats().setUtilization(currentTs > 0 ? server.getServerStats().getServiceSum() / currentTs : 0);
         }
 
         double webServersThroughput = currentTs > 0 ? totalCompletion / currentTs : 0;

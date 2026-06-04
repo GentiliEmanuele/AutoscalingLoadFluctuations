@@ -11,6 +11,8 @@ import static it.simulation.configurations.Config.*;
 public class ConfidenceIntervalsCSV {
 
     private final static String [] SYSTEM_HEADER = {
+            "Lambda",
+            "SCALING_THR",
             "SI_MAX",
             "Service distribution",
             "BusyServer",
@@ -21,11 +23,14 @@ public class ConfidenceIntervalsCSV {
     };
 
     private final static String [] SERVERS_HEADER = {
+            "Lambda",
+            "SCALING_THR",
             "SI_MAX",
             "Service distribution",
             "ServerIndex",
             "ResponseTime",
-            "Throughput"
+            "Throughput",
+            "Utilization"
     };
 
     private static boolean isFirstWriteSystem = true;
@@ -43,9 +48,11 @@ public class ConfidenceIntervalsCSV {
 
             // Map metrics CI and columns
             String[] row = new String[SYSTEM_HEADER.length];
-            row[0] = String.valueOf(SI_MAX);
-            row[1] = String.valueOf(SERVICE_DISTRIBUTION);
-            for (int i = 2; i < SYSTEM_HEADER.length; i++) {
+            row[0] = String.valueOf(1 / ARRIVALS_MU);
+            row[1] = String.valueOf(SCALING_OUT_THRESHOLD);
+            row[2] = String.valueOf(SI_MAX);
+            row[3] = String.valueOf(SERVICE_DISTRIBUTION);
+            for (int i = 4; i < SYSTEM_HEADER.length; i++) {
                 String metricName = SYSTEM_HEADER[i];
                 row[i] = confidenceIntervals.getOrDefault(metricName, "");
             }
@@ -68,12 +75,14 @@ public class ConfidenceIntervalsCSV {
             }
 
             String[] row = new String[SERVERS_HEADER.length];
-            row[0] = String.valueOf(SI_MAX);
-            row[1] = String.valueOf(SERVICE_DISTRIBUTION);
+            row[0] = String.valueOf(1 / ARRIVALS_MU);
+            row[1] = String.valueOf(SCALING_OUT_THRESHOLD);
+            row[2] = String.valueOf(SI_MAX);
+            row[3] = String.valueOf(SERVICE_DISTRIBUTION);
             for (Map.Entry<Integer, Map<String, String>> cis : serversConfidenceIntervals.entrySet()) {
-                row[2] = String.valueOf(cis.getKey());
+                row[4] = String.valueOf(cis.getKey());
 
-                for (int i = 3; i < SERVERS_HEADER.length; i++) {
+                for (int i = 5; i < SERVERS_HEADER.length; i++) {
                     String metricName = SERVERS_HEADER[i];
                     row[i] = cis.getValue().getOrDefault(metricName, "");
                 }

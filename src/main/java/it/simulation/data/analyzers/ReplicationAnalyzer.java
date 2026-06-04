@@ -104,6 +104,7 @@ public class ReplicationAnalyzer implements Analyzer {
         for (Map.Entry<Integer, List<ServerStats>> means : serverRunMeans.entrySet()) {
             computeServerCIAndPut(means.getKey(), "ResponseTime", means.getValue(), ServerStats::getCurrMeanResponseTime);
             computeServerCIAndPut(means.getKey(), "Throughput", means.getValue(), ServerStats::getCurrOutputFrequency);
+            computeServerCIAndPut(means.getKey(), "Utilization", means.getValue(), ServerStats::getUtilization);
         }
     }
 
@@ -119,8 +120,9 @@ public class ReplicationAnalyzer implements Analyzer {
         double endTotalResponseTime = end.getCurrMeanResponseTime() * end.getCompletedJobs();
         double deltaResponseTime = endTotalResponseTime - startTotalResponseTime;
         double meanResponseTime = deltaC != 0 ? deltaResponseTime / deltaC : 0;
+        double utilization = deltaB / deltaT;
 
-        ServerStats currentServerStats = new ServerStats(start.getServerIndex(), deltaN, deltaB, deltaC, deltaA, meanResponseTime, outFreq);
+        ServerStats currentServerStats = new ServerStats(start.getServerIndex(), deltaN, deltaB, deltaC, deltaA, meanResponseTime, outFreq, utilization);
         serverRunMeans.computeIfAbsent(start.getServerIndex(), _ -> new ArrayList<>()).add(currentServerStats);
     }
 

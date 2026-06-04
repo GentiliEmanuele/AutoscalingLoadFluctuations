@@ -15,13 +15,16 @@ public class ServerStats {
     private double currMeanResponseTime; /* current mean response time */
     @Setter
     private double currOutputFrequency;
+    @Setter
+    private double utilization;
 
     public ServerStats(int serverIndex){
         this.serverIndex            = serverIndex;
         this.nodeSum                = 0.0;
         this.serviceSum             = 0.0;
         this.completedJobs          =   0;
-        this.arrivedJobs           =   0;
+        this.arrivedJobs            =   0;
+        this.utilization            =   0;
     }
 
     public ServerStats(ServerStats serverStats) {
@@ -29,11 +32,12 @@ public class ServerStats {
         this.nodeSum                = serverStats.nodeSum;
         this.serviceSum             = serverStats.serviceSum;
         this.completedJobs          = serverStats.completedJobs;
-        this.arrivedJobs           = serverStats.arrivedJobs;
+        this.arrivedJobs            = serverStats.arrivedJobs;
         this.currMeanResponseTime   = serverStats.currMeanResponseTime;
+        this.utilization            = serverStats.utilization;
     }
 
-    public ServerStats(int serverIndex, double nodeSum, double serviceSum, int completedJobs, int arrivedJobs, double currMeanResponseTime, double currOutputFrequency) {
+    public ServerStats(int serverIndex, double nodeSum, double serviceSum, int completedJobs, int arrivedJobs, double currMeanResponseTime, double currOutputFrequency, double utilization) {
         this.serverIndex = serverIndex;
         this.nodeSum = nodeSum;
         this.serviceSum = serviceSum;
@@ -41,6 +45,7 @@ public class ServerStats {
         this.currMeanResponseTime = currMeanResponseTime;
         this.currOutputFrequency = currOutputFrequency;
         this.arrivedJobs = arrivedJobs;
+        this.utilization = utilization;
     }
 
     public void updateServerStats(double startTs, double endTs, double jobNum, Double completedJobResponseTime, ServerState serverState) {
