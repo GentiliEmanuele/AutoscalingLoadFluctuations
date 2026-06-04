@@ -60,8 +60,12 @@ public class ExperimentsFactory {
                 return new BaseExperiment(rngs);
             }
             case "adv-exp-1" -> {
-                EvaluateAutoscalingConfiguration.setEvaluateAutoScalingConfig("r0");
-                return new AdvExp1(rngs);
+                AdvancedExperimentsConfigurations.setEvaluateAutoScalingConfig("r0");
+                return new AdvExps(rngs,  new double[]{1, 1.5, 2, 2.5, 3, 3.5, 4});
+            }
+            case "adv-exp-2" -> {
+                AdvancedExperimentsConfigurations.setEvaluateAutoScalingConfig("jobs");
+                return new AdvExps(rngs, new double[]{5, 10, 15, 20, 25, 30, 35});
             }
         };
 

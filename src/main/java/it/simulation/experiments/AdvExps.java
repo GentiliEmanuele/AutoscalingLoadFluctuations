@@ -5,12 +5,13 @@ import it.simulation.lib.Rngs;
 
 import static it.simulation.configurations.Config.*;
 
-public class AdvExp1 extends BaseExperiment {
+public class AdvExps extends BaseExperiment {
 
-    public static final double[] THRESHOLDS = {1.5, 2, 2.5, 3, 3.5, 4};
+    public final double[] THRESHOLDS;
 
-    public AdvExp1(Rngs rngs) {
+    public AdvExps(Rngs rngs, double[] THRESHOLDS) {
         super(rngs);
+        this.THRESHOLDS = THRESHOLDS;
     }
 
     @Override

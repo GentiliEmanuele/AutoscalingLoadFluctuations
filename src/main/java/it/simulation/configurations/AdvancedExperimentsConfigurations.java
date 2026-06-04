@@ -1,6 +1,6 @@
 package it.simulation.configurations;
 
-public class EvaluateAutoscalingConfiguration extends Config {
+public class AdvancedExperimentsConfigurations extends Config {
     public static void setEvaluateAutoScalingConfig(String indicatorType) {
         SEED = 42;
         ARRIVALS_MU = 0.15;
