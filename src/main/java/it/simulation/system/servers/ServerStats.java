@@ -52,6 +52,8 @@ public class ServerStats {
 
         assert startTs >= 0 && endTs >= startTs && jobNum >= 0;
 
+        if (startTs < START || endTs < START) return;
+
         if(jobNum > 0) {
             this.nodeSum    += (endTs - startTs) * jobNum;
             this.serviceSum += (endTs - startTs);
@@ -61,7 +63,6 @@ public class ServerStats {
         boolean isCompletion = completedJobResponseTime != null;
         if (isCompletion) {
             this.completedJobs++;
-            assert this.completedJobs <= this.arrivedJobs : String.format("Completed=%d > Received=%d", this.completedJobs, this.arrivedJobs);
             currMeanResponseTime += (completedJobResponseTime - currMeanResponseTime) / completedJobs;
         }
     }
