@@ -97,7 +97,7 @@ public class BaseServerInfrastructure implements Infrastructure {
 
     @Override
     public SystemStats computeSystemStats(double currentTs) {
-        if (currentTs < 25000) return new SystemStats(0, 0, 0, 0, 0, 0, 0);
+        if (currentTs < START) return new SystemStats(0, 0, 0, 0, 0, 0, 0);
 
         int totalCompletion = 0;
         int totalArrivals = 0;

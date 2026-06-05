@@ -2,6 +2,7 @@ package it.simulation.configurations;
 
 public class BaseExperimentsConfigurations extends Config {
     public static void setBaseExperimentsConfiguration() {
+        START = 0;
         SEED = 42;
         ARRIVALS_MU = 0.15;
         ARRIVALS_CV = 4;

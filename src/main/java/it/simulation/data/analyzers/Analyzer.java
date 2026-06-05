@@ -84,7 +84,7 @@ public interface Analyzer {
         double halfWidth = Analyzer.computeHalfWidth(values.size(), var);
 
         // Check autocorrelation only for batch mean method
-        if (REPETITION_NUMBER == 1) assert rho <= rhoLimit : String.format("Autocorrelation is more than %.6f for %s\n", rhoLimit, label);
+        if (REPETITION_NUMBER == 1) assert Math.abs(rho) <= rhoLimit : String.format("Autocorrelation is more than %.6f for %s\n", rhoLimit, label);
 
         return Map.entry(label, String.format("%.6f +/- %.6f", mean, halfWidth));
     }
