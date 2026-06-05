@@ -27,10 +27,8 @@ public class BaseExp2 extends BaseExperiment {
                 // Spike is active only if the threshold is finite
                 SPIKESERVER_ACTIVE = siMax != INFINITY;
 
-                if (siMax == INFINITY && lambda == 7) continue;
-
                 // Without spikes control response time grows to infinity
-                if (!SPIKESERVER_ACTIVE && lambda > 7) continue;
+                if (!SPIKESERVER_ACTIVE && lambda > 6) continue;
                 SI_MAX = siMax;
                 for (int i = 0; i < REPETITION_NUMBER; i++) {
                     System.out.printf("\nRepetition %d/%d for SI_MAX = %f and lambda=%f", i, REPETITION_NUMBER, siMax, lambda);

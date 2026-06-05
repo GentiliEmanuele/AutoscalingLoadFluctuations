@@ -78,8 +78,6 @@ public interface Analyzer {
         // Extract desired values
         List<Double> values = extractMetric(inputStats, extractor);
 
-        System.out.println("Num of batches " + values.size());
-
         double mean = Analyzer.computeMean(values);
         double var = Analyzer.computeVariance(values, mean);
         double rho = Analyzer.computeAutocorrelation(values, mean, var);
