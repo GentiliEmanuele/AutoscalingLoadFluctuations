@@ -20,10 +20,10 @@ public class BaseExperimentsConfigurations extends Config {
         ARRIVALS_TOTAL_PERIOD = 0; // It's a don't care because long term fluctuations are not active
         ARRIVALS_FAST_INTERVAL = 0; // It's a don't care because long term fluctuations are not active
         ARRIVALS_FAST_MU = 0; // It's a don't care because long term fluctuations are not active
-        REPETITION_NUMBER = 16;
+        REPETITION_NUMBER = 1;
         CONFIDENCE_LEVEL = 0.95;
         OUTPUT_DIR = "output";
-        BATCH_SIZE = 1; // It's a don't care because batch method is not used
+        BATCH_SIZE = 16384;
         LOG_FINE = false;
         TURN_ON_MU = 5; // It's a don't care because scaling mechanism is not active
         TURN_ON_STD = 0.5; // It's a don't care because scaling mechanism is not active

@@ -68,5 +68,7 @@ public class BatchMeanCollector implements Collector {
         }
         statsByTimestamp.clear();
         serversJobsNumberByTimestamp.clear();
+        numServersByTimestamp.clear();
+        baselineCompletion = 0;
     }
 }
