@@ -1,5 +1,6 @@
 package it.simulation.system;
 
+import it.simulation.data.analyzers.Analyzer;
 import it.simulation.distributions.Distribution;
 import it.simulation.events.Event;
 import it.simulation.events.EventCalendar;
@@ -16,13 +17,15 @@ public class SystemState {
     private final Distribution servicesVA;
     private final Distribution arrivalVA;
     private final Distribution turnOnVA;
+    private final Analyzer analyzer;
 
-    public SystemState(EventCalendar calendar, Distribution servicesVA, Distribution arrivalVA, Distribution turnOnVA) {
+    public SystemState(EventCalendar calendar, Distribution servicesVA, Distribution arrivalVA, Distribution turnOnVA, Analyzer analyzer) {
         this.infrastructure = InfrastructureFactory.createInfrastructure();
         this.calendar = calendar;
         this.servicesVA = servicesVA;
         this.arrivalVA = arrivalVA;
         this.turnOnVA = turnOnVA;
+        this.analyzer = analyzer;
     }
 
     public void addEvent(Event event) {

@@ -68,7 +68,7 @@ public class BaseExperiment implements Experiment {
         calendar.addEvent(firstCompletion);
 
         /* Set up the system state */
-        SystemState s = new SystemState(calendar, servicesVA, arrivalVA, turnOnVa);
+        SystemState s = new SystemState(calendar, servicesVA, arrivalVA, turnOnVa, analyzer);
 
         /* Fluctuation values computation (used only if needed) */
         double slowPercentage = (ARRIVALS_TOTAL_PERIOD - ARRIVALS_FAST_INTERVAL) / ARRIVALS_TOTAL_PERIOD;
@@ -79,7 +79,10 @@ public class BaseExperiment implements Experiment {
         double slowLambda = (meanLambda - fastLambda * fastPercentage) / slowPercentage;
         double slowMu = 1 / slowLambda;
 
-        while (Experiment.continueSimulating(s)) {
+        while (REPETITION_NUMBER == 1 ?
+                analyzer.continueSimulating() :
+                Experiment.continueSimulating(s)
+        ) {
             /* Compute the next event */
             Event nextEvent = calendar.nextEvent();
 

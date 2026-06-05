@@ -27,6 +27,8 @@ public class BaseExp2 extends BaseExperiment {
                 // Spike is active only if the threshold is finite
                 SPIKESERVER_ACTIVE = siMax != INFINITY;
 
+                if (siMax == INFINITY && lambda == 7) continue;
+
                 // Without spikes control response time grows to infinity
                 if (!SPIKESERVER_ACTIVE && lambda > 7) continue;
                 SI_MAX = siMax;

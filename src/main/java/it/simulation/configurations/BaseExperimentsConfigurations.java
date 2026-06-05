@@ -24,7 +24,8 @@ public class BaseExperimentsConfigurations extends Config {
         REPETITION_NUMBER = 1;
         CONFIDENCE_LEVEL = 0.95;
         OUTPUT_DIR = "output";
-        BATCH_SIZE = 16384;
+        BATCH_SIZE = 32768;
+        BATCH_NUM = 16;
         LOG_FINE = false;
         TURN_ON_MU = 5; // It's a don't care because scaling mechanism is not active
         TURN_ON_STD = 0.5; // It's a don't care because scaling mechanism is not active

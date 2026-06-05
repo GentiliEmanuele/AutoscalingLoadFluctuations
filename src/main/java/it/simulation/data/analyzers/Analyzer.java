@@ -18,6 +18,7 @@ public interface Analyzer {
     void pushAndClear();
     void computeSystemConfidenceIntervals();
     void computeServersConfidenceIntervals();
+    boolean continueSimulating();
 
     static double computeMean(List<Double> means) {
         if (means.isEmpty()) return 0.0;
@@ -77,14 +78,16 @@ public interface Analyzer {
         // Extract desired values
         List<Double> values = extractMetric(inputStats, extractor);
 
+        System.out.println("Num of batches " + values.size());
+
         double mean = Analyzer.computeMean(values);
         double var = Analyzer.computeVariance(values, mean);
         double rho = Analyzer.computeAutocorrelation(values, mean, var);
-        double rhoLimit = 2 / Math.sqrt(inputStats.size());
+        double rhoLimit = 2 / Math.sqrt(values.size());
         double halfWidth = Analyzer.computeHalfWidth(values.size(), var);
 
         // Check autocorrelation only for batch mean method
-        if (REPETITION_NUMBER == 1) assert Math.abs(rho) <= rhoLimit : String.format("Autocorrelation is more than %.6f for %s\n", rhoLimit, label);
+        if (REPETITION_NUMBER == 1) assert Math.abs(rho) <= rhoLimit : String.format("Autocorrelation=|%.6f| is more than %.6f for %s\n", rho, rhoLimit, label);
 
         return Map.entry(label, String.format("%.6f +/- %.6f", mean, halfWidth));
     }

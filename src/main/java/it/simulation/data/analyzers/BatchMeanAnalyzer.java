@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.ToDoubleFunction;
 
+import static it.simulation.configurations.Config.BATCH_NUM;
+
 public class BatchMeanAnalyzer implements Analyzer {
     private final List<SystemStats> systemBatchMeans;
     private final Map<String, String> confidenceIntervals;
@@ -26,6 +28,8 @@ public class BatchMeanAnalyzer implements Analyzer {
 
     @Override
     public void analyzeSystemPartially(Map<Double, SystemStats> statsByBatch) {
+        if (statsByBatch.isEmpty()) return;
+
         TreeMap<Double, SystemStats> statsByTimestamp = (TreeMap<Double, SystemStats>) statsByBatch;
 
         // Get first and last batch state
@@ -93,6 +97,11 @@ public class BatchMeanAnalyzer implements Analyzer {
             computeServerCIAndPut(means.getKey(), "ResponseTime", means.getValue(), ServerStats::getCurrMeanResponseTime);
             computeServerCIAndPut(means.getKey(), "Throughput", means.getValue(), ServerStats::getCurrOutputFrequency);
         }
+    }
+
+    @Override
+    public boolean continueSimulating() {
+        return systemBatchMeans.size() < BATCH_NUM;
     }
 
     private void computeCIAndPut(String label, ToDoubleFunction<SystemStats> extractor) {

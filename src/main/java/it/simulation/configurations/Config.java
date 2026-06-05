@@ -35,6 +35,7 @@ public class Config {
     public static double CONFIDENCE_LEVEL;
     public static String OUTPUT_DIR;
     public static int BATCH_SIZE;
+    public static int BATCH_NUM;
     public static boolean LOG_FINE;
     public static double TURN_ON_MU;
     public static double TURN_ON_STD;
@@ -81,6 +82,7 @@ public class Config {
             CONFIDENCE_LEVEL = Double.parseDouble(props.getProperty("confidence.level"));
             OUTPUT_DIR = props.getProperty("output.dir");
             BATCH_SIZE = Integer.parseInt(props.getProperty("batch.size"));
+            BATCH_NUM = Integer.parseInt(props.getProperty("batch.num"));
             LOG_FINE = Boolean.parseBoolean(props.getProperty("log.fine"));
             TURN_ON_MU = Double.parseDouble(props.getProperty("turn.on.mu"));
             TURN_ON_STD = Double.parseDouble(props.getProperty("turn.on.std"));

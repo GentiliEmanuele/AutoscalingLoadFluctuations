@@ -108,6 +108,11 @@ public class ReplicationAnalyzer implements Analyzer {
         }
     }
 
+    @Override
+    public boolean continueSimulating() {
+        throw new RuntimeException("Operation supported only for batch mean methods");
+    }
+
     private void analyzeServerPartially(ServerStats start, ServerStats end, double deltaT) {
         double deltaN = end.getNodeSum() - start.getNodeSum();
         int deltaC = end.getCompletedJobs() - start.getCompletedJobs();

@@ -37,7 +37,11 @@ public class EventProcessor implements EventVisitor{
         s.addEvent(nextCompletion);
 
         /* Generate next arrival if simulation is not finished */
-        if (endTs < STOP) {
+        boolean continueSimulating = REPETITION_NUMBER != 1 ?
+                endTs < STOP :
+                s.getAnalyzer().continueSimulating();
+
+        if (continueSimulating) {
             double nextArrivalTs = endTs + s.getArrivalVA().gen();
             Event nextArrival = new ArrivalEvent(nextArrivalTs);
             s.addEvent(nextArrival);
