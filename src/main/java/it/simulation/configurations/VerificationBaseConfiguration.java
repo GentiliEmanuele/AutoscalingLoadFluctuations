@@ -20,10 +20,11 @@ public class VerificationBaseConfiguration extends Config {
         ARRIVALS_TOTAL_PERIOD = 0; // It's a don't care because long term fluctuations are not active
         ARRIVALS_FAST_INTERVAL = 0; // It's a don't care because long term fluctuations are not active
         ARRIVALS_FAST_MU = 0; // It's a don't care because long term fluctuations are not active
-        REPETITION_NUMBER = 32;
+        REPETITION_NUMBER = 1;
         CONFIDENCE_LEVEL = 0.95;
         OUTPUT_DIR = "output";
-        BATCH_SIZE = 1; // It's a don't care because batch mean analyzer is not used
+        BATCH_SIZE = 32768;
+        BATCH_NUM = 16;
         LOG_FINE = false;
         TURN_ON_MU = 5;
         TURN_ON_STD = 0.5;
