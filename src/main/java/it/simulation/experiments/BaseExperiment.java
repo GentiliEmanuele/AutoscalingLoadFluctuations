@@ -2,6 +2,7 @@ package it.simulation.experiments;
 
 import it.simulation.data.analyzers.Analyzer;
 import it.simulation.data.analyzers.AnalyzerFactory;
+import it.simulation.data.boundary.SeedCSV;
 import it.simulation.data.collectors.Collector;
 import it.simulation.data.collectors.CollectorFactory;
 import it.simulation.distributions.Distribution;
@@ -53,6 +54,12 @@ public class BaseExperiment implements Experiment {
         Distribution arrivalVA = DistributionFactory.createArrivalDistribution(rngs);
         Distribution servicesVA = DistributionFactory.createServiceDistribution(rngs);
         Distribution turnOnVa = DistributionFactory.createTurnOnDistribution(rngs);
+
+        /* Log to CSV the initial seed for each stream for replayability */
+        for (int stream = 0; stream < TOTAL_STREAM; stream++) {
+            rngs.selectStream(stream);
+            SeedCSV.seedToCSV(runId, stream, rngs.getSeed());
+        }
 
         /* Set the current meanInterArrivalTime as mean of arrivalVA */
         arrivalVA.setMean(ARRIVALS_MU);

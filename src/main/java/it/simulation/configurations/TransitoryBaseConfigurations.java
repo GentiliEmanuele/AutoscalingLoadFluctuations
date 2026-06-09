@@ -30,5 +30,6 @@ public class TransitoryBaseConfigurations extends Config {
         SCALING_INDICATOR_TYPE = "r0"; // It's a don't care because scaling mechanism is not active
         SCALING_OUT_THRESHOLD = INFINITY;
         SLIDING_WINDOW_SIZE = 1; // It's a don't care because scaling mechanism is not active
+        TOTAL_STREAM = 6;
     }
 }
