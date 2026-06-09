@@ -23,7 +23,8 @@ public class ValidationBaseConfigurations extends Config {
         REPETITION_NUMBER = 1;
         CONFIDENCE_LEVEL = 0.95;
         OUTPUT_DIR = "output";
-        BATCH_SIZE = 16384;
+        BATCH_SIZE = 32768;
+        BATCH_NUM = 16;
         LOG_FINE = true;
         TURN_ON_MU = 5;
         TURN_ON_STD = 0.5;
