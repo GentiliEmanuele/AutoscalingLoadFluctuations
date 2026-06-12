@@ -87,7 +87,7 @@ public class BaseExperiment implements Experiment {
         double slowMu = 1 / slowLambda;
 
         while (REPETITION_NUMBER == 1 ?
-                analyzer.continueSimulating() :
+                SERVERS_LEVEL_BATCH_MEAN ? Experiment.continueSimulating(s) : analyzer.continueSimulating() :
                 Experiment.continueSimulating(s)
         ) {
             /* Compute the next event */

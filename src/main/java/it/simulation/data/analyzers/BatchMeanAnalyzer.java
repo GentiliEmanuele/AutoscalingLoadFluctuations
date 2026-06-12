@@ -12,6 +12,7 @@ import java.util.TreeMap;
 import java.util.function.ToDoubleFunction;
 
 import static it.simulation.configurations.Config.BATCH_NUM;
+import static it.simulation.configurations.Config.SERVERS_LEVEL_BATCH_MEAN;
 
 public class BatchMeanAnalyzer implements Analyzer {
     private final List<SystemStats> systemBatchMeans;
@@ -69,7 +70,20 @@ public class BatchMeanAnalyzer implements Analyzer {
 
     @Override
     public void analyzeServersPartially(Map<Double, List<ServerStats>> stats) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (stats.isEmpty()) return;
+
+        TreeMap<Double, List<ServerStats>> statsByTimestamp = (TreeMap<Double, List<ServerStats>>) stats;
+
+        // Get first and last run state
+        List<ServerStats> start = statsByTimestamp.firstEntry().getValue();
+        List<ServerStats> end = statsByTimestamp.lastEntry().getValue();
+
+        // Compute run duration
+        double deltaT = statsByTimestamp.lastEntry().getKey() - statsByTimestamp.firstEntry().getKey();
+
+        for (int i = 0; i < end.size(); i++) {
+            analyzeServerPartially(start.get(i), end.get(i), deltaT);
+        }
     }
 
     @Override
@@ -96,6 +110,7 @@ public class BatchMeanAnalyzer implements Analyzer {
         for (Map.Entry<Integer, List<ServerStats>> means : serverBatchMeans.entrySet()) {
             computeServerCIAndPut(means.getKey(), "ResponseTime", means.getValue(), ServerStats::getCurrMeanResponseTime);
             computeServerCIAndPut(means.getKey(), "Throughput", means.getValue(), ServerStats::getCurrOutputFrequency);
+            computeServerCIAndPut(means.getKey(), "Utilization", means.getValue(), ServerStats::getUtilization);
         }
     }
 
@@ -105,6 +120,8 @@ public class BatchMeanAnalyzer implements Analyzer {
     }
 
     private void computeCIAndPut(String label, ToDoubleFunction<SystemStats> extractor) {
+        if (SERVERS_LEVEL_BATCH_MEAN) return;
+
         Map.Entry<String, String> ci = computeConfidenceInterval(systemBatchMeans, label, extractor);
         confidenceIntervals.put(ci.getKey(), ci.getValue());
     }
@@ -113,4 +130,24 @@ public class BatchMeanAnalyzer implements Analyzer {
         Map.Entry<String, String> ci = computeConfidenceInterval(serverStats, label, extractor);
         serversConfidenceIntervals.computeIfAbsent(index, _ -> new TreeMap<>()).put(ci.getKey(), ci.getValue());
     }
+
+
+    private void analyzeServerPartially(ServerStats start, ServerStats end, double deltaT) {
+        double deltaN = end.getNodeSum() - start.getNodeSum();
+        int deltaC = end.getCompletedJobs() - start.getCompletedJobs();
+        int deltaA = end.getArrivedJobs() - start.getArrivedJobs();
+        double deltaB = end.getServiceSum() - start.getServiceSum();
+
+        double outFreq = deltaC / deltaT;
+
+        double startTotalResponseTime = start.getCurrMeanResponseTime() * start.getCompletedJobs();
+        double endTotalResponseTime = end.getCurrMeanResponseTime() * end.getCompletedJobs();
+        double deltaResponseTime = endTotalResponseTime - startTotalResponseTime;
+        double meanResponseTime = deltaC != 0 ? deltaResponseTime / deltaC : 0.0;
+        double utilization = deltaB / deltaT;
+
+        ServerStats currentServerStats = new ServerStats(start.getServerIndex(), deltaN, deltaB, deltaC, deltaA, meanResponseTime, outFreq, utilization);
+        serverBatchMeans.computeIfAbsent(start.getServerIndex(), _ -> new ArrayList<>()).add(currentServerStats);
+    }
+
 }

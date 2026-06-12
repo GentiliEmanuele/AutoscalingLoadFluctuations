@@ -44,6 +44,7 @@ public class Config {
     public static int SLIDING_WINDOW_SIZE;
     public static double START;
     public static double TOTAL_STREAM;
+    public static boolean SERVERS_LEVEL_BATCH_MEAN;
 
     static {
         readConfiguration();
@@ -91,6 +92,7 @@ public class Config {
             SCALING_OUT_THRESHOLD = Double.parseDouble(props.getProperty("scaling.out.threshold"));
             SLIDING_WINDOW_SIZE = Integer.parseInt(props.getProperty("sliding.window.size"));
             TOTAL_STREAM = Integer.parseInt(props.getProperty("total.stream"));
+            SERVERS_LEVEL_BATCH_MEAN = Boolean.parseBoolean(props.getProperty("server.level.batch.mean"));
 
         } catch (IOException e) {
             throw new ExceptionInInitializerError(
