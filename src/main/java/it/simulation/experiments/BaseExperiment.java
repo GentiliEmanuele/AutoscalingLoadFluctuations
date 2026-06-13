@@ -79,12 +79,9 @@ public class BaseExperiment implements Experiment {
 
         /* Fluctuation values computation (used only if needed) */
         double slowPercentage = (ARRIVALS_TOTAL_PERIOD - ARRIVALS_FAST_INTERVAL) / ARRIVALS_TOTAL_PERIOD;
-        double fastPercentage = ARRIVALS_FAST_INTERVAL / ARRIVALS_TOTAL_PERIOD;
 
         double meanLambda = 1 / ARRIVALS_MU;
-        double fastLambda = 1 / ARRIVALS_FAST_MU;
-        double slowLambda = (meanLambda - fastLambda * fastPercentage) / slowPercentage;
-        double slowMu = 1 / slowLambda;
+        double slowMu = 1 / meanLambda;
 
         while (REPETITION_NUMBER == 1 ?
                 SERVERS_LEVEL_BATCH_MEAN ? Experiment.continueSimulating(s) : analyzer.continueSimulating() :

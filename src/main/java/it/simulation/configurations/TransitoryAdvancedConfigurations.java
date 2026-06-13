@@ -19,7 +19,7 @@ public class TransitoryAdvancedConfigurations extends Config {
         SPIKESERVER_ACTIVE = true;
         ARRIVALS_TOTAL_PERIOD = 500;
         ARRIVALS_FAST_INTERVAL = 100;
-        ARRIVALS_FAST_MU = 0.15 / 2; // fast lambda = 8 req/sec
+        ARRIVALS_FAST_MU = 0.15 / 4;
         REPETITION_NUMBER = 5;
         CONFIDENCE_LEVEL = 0.95;
         OUTPUT_DIR = "output";
