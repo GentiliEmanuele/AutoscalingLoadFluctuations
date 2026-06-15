@@ -19,7 +19,7 @@ public class ValidationAdvancedConfiguration extends Config {
         SPIKESERVER_ACTIVE = true;
         ARRIVALS_TOTAL_PERIOD = 500;
         ARRIVALS_FAST_INTERVAL = 100;
-        ARRIVALS_FAST_MU = 0.15 / 2; // fast lambda is the double of mean lambda
+        ARRIVALS_FAST_MU = 0.15 / 4;
         REPETITION_NUMBER = 1;
         CONFIDENCE_LEVEL = 0.95;
         OUTPUT_DIR = "output";
@@ -29,6 +29,6 @@ public class ValidationAdvancedConfiguration extends Config {
         TURN_ON_STD = 0.5;
         SCALING_INDICATOR_TYPE = indicatorType;
         SCALING_OUT_THRESHOLD = autoScalingThr;
-        SLIDING_WINDOW_SIZE = 50;
+        SLIDING_WINDOW_SIZE = 10;
     }
 }
