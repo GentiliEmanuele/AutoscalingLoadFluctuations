@@ -1,5 +1,7 @@
 package it.simulation.events;
 
+import it.simulation.data.boundary.MovingWindowResponseTimeCSV;
+import it.simulation.data.collectors.MovingWindowResponseTimeCollector;
 import it.simulation.system.SystemState;
 import it.simulation.system.infrastructures.Infrastructure;
 import it.simulation.system.jobs.Job;
@@ -64,6 +66,10 @@ public class EventProcessor implements EventVisitor{
 
         /* Compute job advancement */
         double scalingIndicator = infrastructure.computeJobsAdvancement(startTs, endTs, true);
+
+        if (SCALING_INDICATOR_TYPE.equals("r0") && EXPERIMENT.equals("val-adv-1")) {
+            MovingWindowResponseTimeCollector.collectMWResponseTime(s.getCurrent(), scalingIndicator);
+        }
 
         /* Plan scaling */
         planScaling(s, endTs, scalingIndicator);

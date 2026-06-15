@@ -2,9 +2,11 @@ package it.simulation.experiments;
 
 import it.simulation.data.analyzers.Analyzer;
 import it.simulation.data.analyzers.AnalyzerFactory;
+import it.simulation.data.boundary.MovingWindowResponseTimeCSV;
 import it.simulation.data.boundary.SeedCSV;
 import it.simulation.data.collectors.Collector;
 import it.simulation.data.collectors.CollectorFactory;
+import it.simulation.data.collectors.MovingWindowResponseTimeCollector;
 import it.simulation.distributions.Distribution;
 import it.simulation.distributions.DistributionFactory;
 import it.simulation.events.*;
@@ -113,7 +115,7 @@ public class BaseExperiment implements Experiment {
         }
 
         assertArrivalsAndCompletionsEquality(s.getInfrastructure(), s.getCurrent());
-
+        MovingWindowResponseTimeCollector.pushAndClear();
         s.printStats();
     }
 
