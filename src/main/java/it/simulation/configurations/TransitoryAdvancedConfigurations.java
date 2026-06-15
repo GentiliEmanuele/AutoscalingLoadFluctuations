@@ -20,7 +20,7 @@ public class TransitoryAdvancedConfigurations extends Config {
         ARRIVALS_TOTAL_PERIOD = 500;
         ARRIVALS_FAST_INTERVAL = 100;
         ARRIVALS_FAST_MU = 0.15 / 4;
-        REPETITION_NUMBER = 5;
+        REPETITION_NUMBER = 32;
         CONFIDENCE_LEVEL = 0.95;
         OUTPUT_DIR = "output";
         BATCH_SIZE = 16384; // It's a don't care because batch mean mechanism is not used
@@ -31,5 +31,6 @@ public class TransitoryAdvancedConfigurations extends Config {
         SCALING_OUT_THRESHOLD = autoScalingThr;
         SLIDING_WINDOW_SIZE = 10;
         STOP = 50000;
+        TOTAL_STREAM = 8;
     }
 }
