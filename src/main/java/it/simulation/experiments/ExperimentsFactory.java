@@ -67,6 +67,10 @@ public class ExperimentsFactory {
                 AdvancedExperimentsConfigurations.setEvaluateAutoScalingConfig("jobs");
                 return new AdvExps(rngs, new double[]{5, 10, 15, 20, 25, 30, 35});
             }
+            case "adv-exp-3" -> {
+                FiniteAdvExpConfig.setFiniteAdvConfig();
+                return new FiniteAdvExp(rngs);
+            }
         };
 
         throw new IllegalArgumentException("Unsupported experiment: " + EXPERIMENT);

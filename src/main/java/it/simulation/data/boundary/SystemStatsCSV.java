@@ -13,6 +13,10 @@ public class SystemStatsCSV {
 
     private final static String [] HEADER = {
             REPETITION_NUMBER == 1 ? "Batch Id" : "Run Id",
+            "SI_MAX",
+            "SCALING_OUT_THR",
+            "SCALING_IN_THR",
+            "SCALING_TYPE",
             "Timestamp",
             "Throughput",
             "BusyServer",
@@ -51,6 +55,10 @@ public class SystemStatsCSV {
         SystemStats systemStats = statsByTimestamp.getValue();
         return new String[]{
                 String.valueOf(runId),
+                String.valueOf(SI_MAX),
+                String.format("'%s'", String.valueOf(SCALING_INDICATOR_TYPE.equals("r0") ? SCALING_OUT_THRESHOLD * 1.5 : SCALING_OUT_THRESHOLD)),
+                String.valueOf(SCALING_INDICATOR_TYPE.equals("r0") ? SCALING_OUT_THRESHOLD * 0.5 : SCALING_OUT_THRESHOLD * 0.6),
+                SCALING_INDICATOR_TYPE,
                 String.valueOf(timestamp),
                 String.valueOf(systemStats.getThroughput()),
                 String.valueOf(systemStats.getMeanBusyServer()),
